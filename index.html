@@ -1,0 +1,3631 @@
+--bg-night-border: rgba(148, 163, 184, 0.16);
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Архив Земли Ууу — Land of Ooo Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Unbounded:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ==========================================================================
+       ДИЗАЙН-ТОКЕНЫ И ПАЛИТРА «АРХИВ ЗЕМЛИ УУУ»
+       ========================================================================== */
+    :root {
+      /* Глубокий фон ночной Земли Ууу */
+      --bg-night: #0f172a;
+      --bg-night-elevated: #131c31;
+      /* Мягкие светлые карточки для высокой читаемости */
+      --surface-light: #f8fafc;
+      --surface-light-muted: #f1f5f9;
+      --surface-light-hover: #ffffff;
+      --border-light: #e2e8f0;
+      --border-light-strong: #cbd5e1;
+
+      /* Типографика */
+      --text-on-dark: #f8fafc;
+      --text-on-dark-muted: #94a3b8;
+      --text-on-light: #0f172a;
+      --text-on-light-secondary: #475569;
+      --text-on-light-muted: #64748b;
+
+      /* Акцентные цвета Финна и Джейка */
+      --accent-finn: #38bdf8;
+      --accent-finn-dark: #0284c7;
+      --accent-finn-soft: rgba(56, 189, 248, 0.14);
+
+      --accent-jake: #facc15;
+      --accent-jake-dark: #ca8a04;
+      --accent-jake-soft: rgba(250, 204, 21, 0.16);
+
+      --danger: #ef4444;
+      --success: #10b981;
+
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 22px;
+      --radius-full: 9999px;
+
+      --shadow-card: 0 12px 28px -8px rgba(2, 6, 23, 0.45);
+      --shadow-modal: 0 25px 50px -12px rgba(2, 6, 23, 0.75);
+      --transition-fast: 180ms cubic-bezier(0.22, 1, 0.36, 1);
+      --transition-smooth: 260ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* ==========================================================================
+       СТИЛИ ИЛЛЮСТРАЦИЙ И КАДРОВ ИЗ ВСЕЛЕННОЙ УУУ
+       ========================================================================== */
+    .char-scene-banner {
+      width: 100%;
+      height: 150px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+    }
+
+    .char-scene-banner svg.scene-art {
+      width: 100%;
+      height: 100%;
+      display: block;
+      transition: transform 0.35s ease;
+    }
+
+    .char-card:hover .char-scene-banner svg.scene-art {
+      transform: scale(1.04);
+    }
+
+    .char-realm-badge.overlay-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
+    }
+
+    .artifact-scene-banner {
+      width: 100%;
+      height: 120px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+    }
+
+    .artifact-scene-banner svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      transition: transform 0.35s ease;
+    }
+
+    .artifact-card:hover .artifact-scene-banner svg {
+      transform: scale(1.05);
+    }
+
+    .artifact-rarity.overlay-rarity {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
+    }
+
+    .kingdom-banner {
+      height: 220px !important;
+      padding: 0 !important;
+    }
+
+    .kingdom-banner svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* ==========================================================================
+       РАЗДЕЛ ВИДЕОЗАЛА И КАРТОТЕКИ ВСЕХ 10 СЕЗОНОВ
+       ========================================================================== */
+    .cinema-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 940px) {
+      .cinema-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .player-card {
+      background: var(--surface-light);
+      color: var(--text-on-light);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-card);
+    }
+
+    .video-frame-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: #090d16;
+      border: 1px solid var(--border-light-strong);
+      margin-bottom: 18px;
+    }
+
+    .video-frame-wrap canvas.cinema-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .cinema-controls-bar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 10px 14px;
+      background: linear-gradient(to top, rgba(9, 13, 22, 0.92), rgba(9, 13, 22, 0.25));
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 2;
+    }
+
+    .cinema-play-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--accent-finn);
+      color: #0f172a;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-weight: 700;
+    }
+
+    .cinema-timeline-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .cinema-timeline-track {
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(248, 250, 252, 0.22);
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .cinema-timeline-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent-jake);
+      transition: width 120ms linear;
+    }
+
+    .cinema-time-label {
+      font-size: 0.72rem;
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+
+    .video-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .video-season-tag {
+      padding: 5px 12px;
+      border-radius: var(--radius-full);
+      background: #e0f2fe;
+      color: #0369a1;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .video-now-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-on-light);
+      margin-bottom: 8px;
+    }
+
+    .video-now-desc {
+      font-size: 0.92rem;
+      color: var(--text-on-light-secondary);
+      line-height: 1.55;
+      margin-bottom: 18px;
+    }
+
+    .official-watch-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      background: var(--surface-light-muted);
+      border: 1px solid var(--border-light);
+    }
+
+    .official-watch-note {
+      font-size: 0.82rem;
+      color: var(--text-on-light-secondary);
+      max-width: 360px;
+    }
+
+    .official-links-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn-official-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 14px;
+      min-height: 38px;
+      border-radius: var(--radius-sm);
+      background: #0f172a;
+      color: #ffffff;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: background var(--transition-fast);
+    }
+
+    .btn-official-link:hover {
+      background: #0284c7;
+    }
+
+    .seasons-browser {
+      background: var(--surface-light);
+      color: var(--text-on-light);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-card);
+    }
+
+    .season-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .season-tab-btn {
+      padding: 7px 11px;
+      min-height: 34px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-light-muted);
+      border: 1px solid var(--border-light-strong);
+      color: var(--text-on-light-secondary);
+      font-size: 0.8rem;
+      font-weight: 700;
+      transition: all var(--transition-fast);
+    }
+
+    .season-tab-btn:hover {
+      border-color: var(--accent-finn-dark);
+      color: var(--text-on-light);
+    }
+
+    .season-tab-btn.active {
+      background: var(--accent-finn-dark);
+      border-color: var(--accent-finn-dark);
+      color: #ffffff;
+    }
+
+    .season-summary-box {
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      margin-bottom: 14px;
+    }
+
+    .season-summary-title {
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: #0f172a;
+      margin-bottom: 3px;
+    }
+
+    .season-summary-meta {
+      font-size: 0.78rem;
+      color: #0369a1;
+      font-weight: 600;
+    }
+
+    .season-episodes-scroll {
+      max-height: 360px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-right: 4px;
+    }
+
+    .cinema-ep-btn {
+      width: 100%;
+      text-align: left;
+      padding: 11px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-light-muted);
+      border: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      transition: all var(--transition-fast);
+    }
+
+    .cinema-ep-btn:hover {
+      border-color: var(--accent-finn-dark);
+      background: #ffffff;
+    }
+
+    .cinema-ep-btn.playing {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+    }
+
+    .cinema-ep-num {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-finn-dark);
+      display: block;
+    }
+
+    .cinema-ep-btn.playing .cinema-ep-num {
+      color: var(--accent-jake);
+    }
+
+    .cinema-ep-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    /* ==========================================================================
+       СБРОС И БАЗОВЫЕ СТИЛИ
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+      background-color: var(--bg-night);
+      color: var(--text-on-dark);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-night);
+      color: var(--text-on-dark);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4, .font-display {
+      font-family: 'Unbounded', sans-serif;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    button, input, textarea, select {
+      font-family: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ==========================================================================
+       ШАПКА И НАВИГАЦИЯ
+       ========================================================================== */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--bg-night-border);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text-on-dark);
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--accent-finn-soft);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-finn);
+      flex-shrink: 0;
+    }
+
+    .brand-sub {
+      display: block;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--text-on-dark-muted);
+      letter-spacing: 0.03em;
+    }
+
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nav-link {
+      padding: 9px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-on-dark-muted);
+      transition: all var(--transition-fast);
+    }
+
+    .nav-link:hover {
+      color: var(--text-on-dark);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-tracker-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: var(--radius-full);
+      background: var(--bg-night-elevated);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: var(--text-on-dark);
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all var(--transition-fast);
+      min-height: 42px;
+    }
+
+    .nav-tracker-btn:hover {
+      border-color: var(--accent-finn);
+      background: rgba(56, 189, 248, 0.12);
+    }
+
+    .progress-pill {
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      background: var(--accent-jake);
+      color: #0f172a;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-night-elevated);
+      border: 1px solid var(--bg-night-border);
+      color: var(--text-on-dark);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mobile-drawer {
+      display: none;
+      background: var(--bg-night-elevated);
+      border-bottom: 1px solid var(--bg-night-border);
+      padding: 12px 20px 20px;
+    }
+
+    .mobile-drawer.open {
+      display: block;
+    }
+
+    .mobile-drawer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .mobile-drawer-link {
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-on-dark);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    @media (max-width: 900px) {
+      .nav-menu {
+        display: none;
+      }
+      .mobile-menu-btn {
+        display: inline-flex;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .brand-sub {
+        display: none;
+      }
+      .brand {
+        font-size: 0.9rem;
+      }
+      .nav-tracker-btn span.btn-label {
+        display: none;
+      }
+    }
+
+    /* ==========================================================================
+       1. ПЕРВЫЙ ЭКРАН (HERO)
+       ========================================================================== */
+    .hero-section {
+      position: relative;
+      padding: 60px 0 72px;
+      border-bottom: 1px solid var(--bg-night-border);
+      background:
+        radial-gradient(circle at 12% 20%, rgba(56, 189, 248, 0.11) 0%, transparent 42%),
+        radial-gradient(circle at 88% 78%, rgba(250, 204, 21, 0.08) 0%, transparent 45%),
+        var(--bg-night);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      background: var(--accent-finn-soft);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--accent-finn);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 4.2vw, 3.3rem);
+      font-weight: 700;
+      color: var(--text-on-dark);
+      margin-bottom: 20px;
+    }
+
+    .hero-title .highlight-finn {
+      color: var(--accent-finn);
+    }
+
+    .hero-title .highlight-jake {
+      color: var(--accent-jake);
+    }
+
+    .hero-lead {
+      font-size: 1.05rem;
+      color: var(--text-on-dark-muted);
+      max-width: 570px;
+      margin-bottom: 30px;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+
+    .btn-finn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 24px;
+      min-height: 48px;
+      border-radius: var(--radius-md);
+      background: var(--accent-finn);
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: transform var(--transition-fast), background var(--transition-fast);
+    }
+
+    .btn-finn:hover {
+      background: #7dd3fc;
+      transform: translateY(-2px);
+    }
+
+    .btn-outline-jake {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 22px;
+      min-height: 48px;
+      border-radius: var(--radius-md);
+      background: var(--bg-night-elevated);
+      border: 1px solid rgba(250, 204, 21, 0.45);
+      color: var(--accent-jake);
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-outline-jake:hover {
+      background: var(--accent-jake-soft);
+      border-color: var(--accent-jake);
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      padding-top: 24px;
+      border-top: 1px solid var(--bg-night-border);
+      max-width: 520px;
+    }
+
+    .stat-num {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text-on-dark);
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-on-dark-muted);
+      margin-top: 2px;
+    }
+
+    /* Светлая карточка генератора цитат в Hero */
+    .quote-card {
+      background: var(--surface-light);
+      color: var(--text-on-light);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 270px;
+    }
+
+    .quote-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .quote-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: var(--radius-full);
+      background: #fef9c3;
+      color: #854d0e;
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .quote-refresh-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      min-height: 38px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-light-muted);
+      border: 1px solid var(--border-light-strong);
+      color: var(--text-on-light);
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: all var(--transition-fast);
+    }
+
+    .quote-refresh-btn:hover {
+      background: #e0f2fe;
+      border-color: var(--accent-finn-dark);
+      color: var(--accent-finn-dark);
+    }
+
+    .quote-refresh-btn svg {
+      transition: transform 0.35s ease;
+    }
+
+    .quote-refresh-btn.spin svg {
+      transform: rotate(360deg);
+    }
+
+    .quote-body {
+      font-size: 1.08rem;
+      font-weight: 600;
+      color: var(--text-on-light);
+      line-height: 1.55;
+      margin-bottom: 22px;
+      transition: opacity var(--transition-fast);
+    }
+
+    .quote-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-light);
+      gap: 10px;
+    }
+
+    .quote-speaker {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-on-light);
+    }
+
+    .quote-episode {
+      font-size: 0.78rem;
+      color: var(--text-on-light-muted);
+    }
+
+    @media (max-width: 920px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+      .hero-section {
+        padding: 40px 0 54px;
+      }
+    }
+
+    /* ==========================================================================
+       ОБЩИЕ СТИЛИ СЕКЦИЙ
+       ========================================================================== */
+    .archive-section {
+      padding: 72px 0;
+      border-bottom: 1px solid var(--bg-night-border);
+    }
+
+    .archive-section.alt-bg {
+      background-color: var(--bg-night-elevated);
+    }
+
+    .section-head {
+      margin-bottom: 34px;
+    }
+
+    .section-kicker {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--accent-finn);
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-size: clamp(1.55rem, 3vw, 2.2rem);
+      font-weight: 700;
+      color: var(--text-on-dark);
+      margin-bottom: 10px;
+    }
+
+    .section-desc {
+      color: var(--text-on-dark-muted);
+      font-size: 0.98rem;
+      max-width: 620px;
+    }
+
+    /* ==========================================================================
+       2. ГЕРОИ И СУЩЕСТВА (КАТАЛОГ + ПОИСК + ФИЛЬТРЫ)
+       ========================================================================== */
+    .filter-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .kingdom-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-chip {
+      padding: 9px 16px;
+      min-height: 40px;
+      border-radius: var(--radius-full);
+      background: var(--bg-night-elevated);
+      border: 1px solid var(--bg-night-border);
+      color: var(--text-on-dark-muted);
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all var(--transition-fast);
+    }
+
+    .filter-chip:hover {
+      color: var(--text-on-dark);
+      border-color: rgba(255, 255, 255, 0.28);
+    }
+
+    .filter-chip.active {
+      background: var(--accent-finn);
+      border-color: var(--accent-finn);
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .search-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .search-wrapper svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-on-dark-muted);
+      pointer-events: none;
+    }
+
+    .search-field {
+      width: 100%;
+      height: 44px;
+      padding: 0 38px 0 40px;
+      border-radius: var(--radius-md);
+      background: var(--bg-night-elevated);
+      border: 1px solid var(--bg-night-border);
+      color: var(--text-on-dark);
+      font-size: 0.9rem;
+      transition: border-color var(--transition-fast);
+    }
+
+    .search-field::placeholder {
+      color: var(--text-on-dark-muted);
+    }
+
+    .search-field:focus {
+      outline: none;
+      border-color: var(--accent-finn);
+    }
+
+    .clear-search-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 26px;
+      height: 26px;
+      border-radius: var(--radius-full);
+      color: var(--text-on-dark-muted);
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .clear-search-btn.visible {
+      display: flex;
+    }
+
+    @media (max-width: 640px) {
+      .search-wrapper {
+        max-width: 100%;
+      }
+    }
+
+    .cards-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    @media (max-width: 960px) {
+      .cards-grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .cards-grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Светлые карточки персонажей */
+    .char-card {
+      background: var(--surface-light);
+      color: var(--text-on-light);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
+      cursor: pointer;
+    }
+
+    .char-card:hover {
+      transform: translateY(-4px);
+      background: var(--surface-light-hover);
+      box-shadow: 0 20px 35px -10px rgba(2, 6, 23, 0.6);
+    }
+
+    .char-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .char-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .char-realm-badge {
+      padding: 5px 11px;
+      border-radius: var(--radius-full);
+      background: var(--surface-light-muted);
+      border: 1px solid var(--border-light-strong);
+      color: var(--text-on-light-secondary);
+      font-size: 0.74rem;
+      font-weight: 600;
+    }
+
+    .char-title {
+      font-size: 1.12rem;
+      font-weight: 700;
+      color: var(--text-on-light);
+      margin-bottom: 4px;
+    }
+
+    .char-role {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--accent-finn-dark);
+      margin-bottom: 10px;
+    }
+
+    .char-summary {
+      font-size: 0.88rem;
+      color: var(--text-on-light-secondary);
+      line-height: 1.52;
+      margin-bottom: 18px;
+    }
+
+    .char-card-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-light);
+      font-size: 0.83rem;
+      font-weight: 700;
+      color: var(--text-on-light);
+    }
+
+    .char-card-bottom span.open-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--accent-finn-dark);
+    }
+
+    .empty-box {
+      grid-column: 1 / -1;
+      background: var(--surface-light);
+      color: var(--text-on-light);
+      border-radius: var(--radius-lg);
+      padding: 44px 24px;
+      text-align: center;
+      border: 1px solid var(--border-light);
+    }
+
+    .empty-box h3 {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+
+    .empty-box p {
+      color: var(--text-on-light-secondary);
+      font-size: 0.92rem;
+      margin-bottom: 18px;
+    }
+
+    /* ==========================================================================
+       3. КАРТА И КОРОЛЕВСТВА УУУ
+       ========================================================================== */
+    .kingdoms-layout {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 860px) {
+      .kingdoms-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .kingdom-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .kingdom-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 16px 18px;
+      min-height: 68px;
+      border-radius: var(--radius-md);
+      background: var(--bg-night);
+      border: 1px solid var(--bg-night-border);
+      color: var(--text-on-dark);
+      text-align: left;
+      transition: all var(--transition-fast);
+    }
+
+    .kingdom-btn:hover {
+      border-color: rgba(56, 189, 248, 0.45);
+      background: rgba(56, 189, 248, 0.05);
+    }
+
+    .kingdom-btn.active {
+      background: var(--surface-light);
+      color: var(--text-on-light);
+      border-color: var(--accent-finn);
+      box-shadow: var(--shadow-card);
+    }
+
+    .kingdom-btn-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .kingdom-icon-box {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .kingdom-btn-name {
+      font-weight: 700;
+      font-size: 0.96rem;
+    }
+
+    .kingdom-btn-ruler {
+      font-size: 0.8rem;
+      opacity: 0.75;
+      margin-top: 2px;
+    }
+
+    /* Светлая карточка активного королевства */
+    .kingdom-viewer {
+      background: var(--surface-light);
+      color: var(--text-on-light);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .kingdom-banner {
+      width: 100%;
+      height: 156px;
+      border-radius: var(--radius-md);
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-light);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kingdom-viewer-title {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--text-on-light);
+      margin-bottom: 10px;
+    }
+
+    .kingdom-viewer-desc {
+      font-size: 0.95rem;
+      color: var(--text-on-light-secondary);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .kingdom-specs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 480px) {
+      .kingdom-specs {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .spec-item {
+      background: var(--surface-light-muted);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+    }
+
+    .spec-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-on-light-muted);
+      margin-bottom: 4px;
+    }
+
+    .spec-val {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-on-light);
+    }
+
+    .kingdom-facts-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-on-light);
+      margin-bottom: 10px;
+    }
+
+    .kingdom-facts-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .kingdom-facts-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: var(--text-on-light-secondary);
+    }
+
+    .kingdom-facts-list li::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-finn-dark);
+      margin-top: 8px;
+      flex-shrink: 0;
+    }
+
+    /* ==========================================================================
+       4. АРСЕНАЛ И АРТЕФАКТЫ
+       ========================================================================== */
+    .artifact-card {
+      background: var(--surface-light);
+      color: var(--text-on-light);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
+    }
+
+    .artifact-card:hover {
+      transform: translateY(-4px);
+      background: var(--surface-light-hover);
+    }
+
+    .artifact-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .artifact-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .artifact-rarity {
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.74rem;
+      font-weight: 700;
+    }
+
+    .artifact-name {
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: var(--text-on-light);
+      margin-bottom: 6px;
+    }
+
+    .artifact-owner {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-on-light-muted);
+      margin-bottom: 10px;
+    }
+
+    .artifact-desc {
+      font-size: 0.88rem;
+      color: var(--text-on-light-secondary);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .artifact-power-bar {
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--accent-finn-dark);
+    }
+
+    /* ==========================================================================
+       5. ДНЕВНИК ИСКАТЕЛЯ ПРИКЛЮЧЕНИЙ (ТРЕКЕР ЭПИЗОДОВ + ЗАМЕТКИ)
+       ========================================================================== */
+    .diary-layout {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .diary-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .diary-panel {
+      background: var(--surface-light);
+      color: var(--text-on-light);
+      border-radius: var(--radius-lg);
+      padding: 26px;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-card);
+    }
+
+    .diary-panel-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .diary-panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-on-light);
+    }
+
+    .progress-bar-wrap {
+      width: 100%;
+      height: 10px;
+      background: var(--surface-light-muted);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin-bottom: 20px;
+      border: 1px solid var(--border-light);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent-finn-dark);
+      border-radius: var(--radius-full);
+      transition: width 0.35s ease;
+    }
+
+    .episode-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .episode-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      background: var(--surface-light-muted);
+      border: 1px solid var(--border-light);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .episode-item:hover {
+      border-color: var(--accent-finn-dark);
+      background: #ffffff;
+    }
+
+    .episode-item.watched {
+      background: #f0f9ff;
+      border-color: #bae6fd;
+    }
+
+    .episode-checkbox {
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      border: 2px solid var(--border-light-strong);
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      color: #ffffff;
+      transition: all var(--transition-fast);
+    }
+
+    .episode-item.watched .episode-checkbox {
+      background: var(--accent-finn-dark);
+      border-color: var(--accent-finn-dark);
+    }
+
+    .episode-code {
+      display: inline-block;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--accent-finn-dark);
+      margin-bottom: 2px;
+    }
+
+    .episode-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-on-light);
+      margin-bottom: 4px;
+    }
+
+    .episode-item.watched .episode-name {
+      text-decoration: line-through;
+      opacity: 0.72;
+    }
+
+    .episode-note {
+      font-size: 0.83rem;
+      color: var(--text-on-light-secondary);
+      line-height: 1.45;
+    }
+
+    /* Форма заметок в дневнике */
+    .note-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .note-input, .note-textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-light-muted);
+      border: 1px solid var(--border-light-strong);
+      color: var(--text-on-light);
+      font-size: 0.9rem;
+      transition: border-color var(--transition-fast);
+    }
+
+    .note-input:focus, .note-textarea:focus {
+      outline: none;
+      border-color: var(--accent-finn-dark);
+      background: #ffffff;
+    }
+
+    .note-textarea {
+      min-height: 86px;
+      resize: vertical;
+    }
+
+    .form-error {
+      font-size: 0.82rem;
+      color: var(--danger);
+      font-weight: 500;
+      display: none;
+    }
+
+    .form-error.visible {
+      display: block;
+    }
+
+    .btn-submit-note {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 18px;
+      min-height: 44px;
+      border-radius: var(--radius-sm);
+      background: #0f172a;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: background var(--transition-fast);
+    }
+
+    .btn-submit-note:hover {
+      background: #1e293b;
+    }
+
+    .notes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .user-note-card {
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      background: var(--surface-light-muted);
+      border: 1px solid var(--border-light);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .user-note-title {
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: var(--text-on-light);
+      margin-bottom: 4px;
+    }
+
+    .user-note-text {
+      font-size: 0.85rem;
+      color: var(--text-on-light-secondary);
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .user-note-date {
+      display: block;
+      font-size: 0.74rem;
+      color: var(--text-on-light-muted);
+      margin-top: 6px;
+    }
+
+    .delete-note-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-sm);
+      color: var(--text-on-light-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all var(--transition-fast);
+    }
+
+    .delete-note-btn:hover {
+      background: #fee2e2;
+      color: var(--danger);
+    }
+
+    .notes-empty {
+      text-align: center;
+      padding: 24px 16px;
+      border-radius: var(--radius-md);
+      border: 1px dashed var(--border-light-strong);
+      color: var(--text-on-light-muted);
+      font-size: 0.88rem;
+    }
+
+    .btn-reset-all {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      min-height: 36px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-light-muted);
+      border: 1px solid var(--border-light-strong);
+      color: var(--text-on-light-secondary);
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-reset-all:hover {
+      border-color: var(--danger);
+      color: var(--danger);
+      background: #fef2f2;
+    }
+
+    /* ==========================================================================
+       МОДАЛЬНОЕ ОКНО ДЕТАЛЬНОГО ДОСЬЕ (ПЕРСОНАЖИ И АРТЕФАКТЫ)
+       ========================================================================== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background: rgba(2, 6, 23, 0.78);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+      animation: fadeIn 180ms ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-dialog {
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: var(--surface-light);
+      color: var(--text-on-light);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-modal);
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      background: var(--surface-light-muted);
+      border: 1px solid var(--border-light-strong);
+      color: var(--text-on-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition-fast);
+    }
+
+    .modal-close:hover {
+      background: #e2e8f0;
+    }
+
+    .modal-header-block {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-right: 44px;
+      margin-bottom: 20px;
+    }
+
+    .modal-emblem {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .modal-kicker {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent-finn-dark);
+      margin-bottom: 4px;
+    }
+
+    .modal-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-on-light);
+    }
+
+    .modal-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 460px) {
+      .modal-meta-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .modal-meta-cell {
+      background: var(--surface-light-muted);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+    }
+
+    .modal-meta-key {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-on-light-muted);
+      margin-bottom: 2px;
+    }
+
+    .modal-meta-val {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-on-light);
+    }
+
+    .modal-section-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-on-light);
+      margin: 18px 0 8px;
+    }
+
+    .modal-text {
+      font-size: 0.94rem;
+      color: var(--text-on-light-secondary);
+      line-height: 1.62;
+    }
+
+    .modal-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .modal-tag {
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      background: #e0f2fe;
+      color: #0369a1;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* ==========================================================================
+       УВЕДОМЛЕНИЯ (TOAST) И ПОДВАЛ
+       ========================================================================== */
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 80;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: calc(100vw - 40px);
+    }
+
+    .toast {
+      background: #0f172a;
+      color: #f8fafc;
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      border-radius: var(--radius-md);
+      padding: 13px 18px;
+      box-shadow: 0 14px 30px rgba(2, 6, 23, 0.65);
+      font-size: 0.88rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideUp 220ms ease;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .site-footer {
+      padding: 40px 0;
+      background: var(--bg-night);
+      color: var(--text-on-dark-muted);
+      font-size: 0.86rem;
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent-finn);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================================
+       ШАПКА САЙТА
+       ======================================================================== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#top" class="brand" aria-label="Архив Земли Ууу — на главную">
+        <div class="brand-mark">
+          <!-- Минималистичная векторная иконка меча/компаса -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="14.5 3.5 20.5 3.5 20.5 9.5 9.5 20.5 3.5 14.5 14.5 3.5"></polygon>
+            <line x1="16" y1="8" x2="8" y2="16"></line>
+            <line x1="3" y1="21" x2="7" y2="17"></line>
+          </svg>
+        </div>
+        <div>
+          Архив Земли Ууу
+          <span class="brand-sub">Land of Ooo Archive</span>
+        </div>
+      </a>
+
+      <nav class="nav-menu" aria-label="Основная навигация">
+        <a href="#cinema" class="nav-link">Смотреть сериал</a>
+        <a href="#princesses" class="nav-link">Принцессы</a>
+        <a href="#characters" class="nav-link">Герои и существа</a>
+        <a href="#kingdoms" class="nav-link">Королевства Ууу</a>
+        <a href="#artifacts" class="nav-link">Арсенал</a>
+        <a href="#diary" class="nav-link">Дневник</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="#diary" class="nav-tracker-btn" title="Перейти к трекеру эпизодов">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          <span class="btn-label">Эпизоды</span>
+          <span class="progress-pill" id="headerProgressBadge">0/8</span>
+        </a>
+
+        <button type="button" class="mobile-menu-btn" id="mobileMenuToggle" aria-label="Открыть меню" aria-expanded="false">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="mobile-drawer" id="mobileDrawer">
+      <div class="mobile-drawer-links">
+        <a href="#cinema" class="mobile-drawer-link">Смотреть сериал (1–10 сезоны)</a>
+        <a href="#princesses" class="mobile-drawer-link">Принцессы и правительницы</a>
+        <a href="#characters" class="mobile-drawer-link">Герои и существа</a>
+        <a href="#kingdoms" class="mobile-drawer-link">Карта и королевства Ууу</a>
+        <a href="#artifacts" class="mobile-drawer-link">Арсенал и артефакты</a>
+        <a href="#diary" class="mobile-drawer-link">Дневник искателя приключений</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- ======================================================================
+         1. ПЕРВЫЙ ЭКРАН (HERO)
+         ====================================================================== -->
+    <section class="hero-section">
+      <div class="container hero-grid">
+        <div>
+          <div class="hero-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+            </svg>
+            Путеводитель и видеоархив Земли Ууу
+          </div>
+          <h1 class="hero-title">
+            Летопись <span class="highlight-finn">Земли Ууу</span> и хроники <span class="highlight-jake">Великой Войны Грибов</span>
+          </h1>
+          <p class="hero-lead">
+            Интерактивная энциклопедия и кинозал Adventure Time: встроенные официальные выпуски, каталог всех 10 сезонов, иллюстрированные досье героев, карта королевств и путевой дневник.
+          </p>
+          <div class="hero-cta-group">
+            <a href="#cinema" class="btn-finn">
+              Смотреть серии и выпуски
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+            </a>
+            <a href="#characters" class="btn-outline-jake">
+              Герои и кадры
+            </a>
+          </div>
+
+          <div class="hero-stats">
+            <div>
+              <div class="stat-num">10</div>
+              <div class="stat-label">Сезонов (283 серии)</div>
+            </div>
+            <div>
+              <div class="stat-num">11</div>
+              <div class="stat-label">Досье и принцесс</div>
+            </div>
+            <div>
+              <div class="stat-num">7</div>
+              <div class="stat-label">Регионов Ууу</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Интерактивный генератор цитат персонажей -->
+        <div class="quote-card" aria-live="polite">
+          <div>
+            <div class="quote-card-top">
+              <span class="quote-pill">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+                </svg>
+                Цитата дня
+              </span>
+              <button type="button" class="quote-refresh-btn" id="nextQuoteBtn" aria-label="Показать следующую цитату">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="23 4 23 10 17 10"></polyline>
+                  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                </svg>
+                Новая цитата
+              </button>
+            </div>
+            <p class="quote-body" id="quoteText">«Пока мы живы, мы можем исправить всё, что натворили. Главное — не сдаваться и идти вперёд».</p>
+          </div>
+          <div class="quote-footer">
+            <div>
+              <div class="quote-speaker" id="quoteSpeaker">Финн Парнишка</div>
+              <div class="quote-episode" id="quoteEpisode">Время приключений</div>
+            </div>
+            <span style="font-size: 0.76rem; font-weight: 600; color: #0284c7;">Земля Ууу</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         КИНОЗАЛ И КАТАЛОГ ВСЕХ 10 СЕЗОНОВ
+         ====================================================================== -->
+    <section class="archive-section alt-bg" id="cinema">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-kicker">Кинозал и хронология (283 серии)</span>
+          <h2 class="section-title">Смотреть сериал и каталог всех 10 сезонов</h2>
+          <p class="section-desc">
+            Выбирайте сезон (с 1 по 10) и серию для локального просмотра на холсте, отмечайте просмотренное и переходите к выбранному эпизоду на adventuretime.top.
+          </p>
+        </div>
+
+        <div class="cinema-layout">
+          <div class="player-card">
+            <div class="video-frame-wrap">
+              <canvas class="cinema-canvas" id="cinemaCanvas"></canvas>
+              <div class="cinema-controls-bar">
+                <button type="button" class="cinema-play-btn" id="cinemaPlayBtn" aria-label="Пауза или воспроизведение">II</button>
+                <div class="cinema-timeline-wrap">
+                  <div class="cinema-timeline-track" id="cinemaTimelineTrack" title="Перемотка сцены">
+                    <div class="cinema-timeline-fill" id="cinemaTimelineFill"></div>
+                  </div>
+                  <div class="cinema-time-label" id="cinemaTimeLabel">00:00 / 11:00 • Локальный проигрыватель сцен</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="video-meta-row">
+              <span class="video-season-tag" id="cinemaEpisodeBadge">Сезон 1 • Серия 1</span>
+              <button type="button" class="btn-reset-all" id="markEpisodeWatchedBtn">Отметить просмотренным</button>
+            </div>
+
+            <h3 class="video-now-title" id="cinemaEpisodeTitle">«Заварушка на подвесном стуле»</h3>
+            <p class="video-now-desc" id="cinemaEpisodeDesc">
+              Финн и Джейк пытаются вырваться из скуки Конфетного Королевства и отправляются спасать принцессу от злого графа.
+            </p>
+
+            <div class="official-watch-bar">
+              <div class="official-watch-note">
+                Встроенный плеер воспроизводит сцену локально в браузере; при нажатии ниже откроется карточка серии на adventuretime.top.
+              </div>
+              <div class="official-links-group">
+                <a href="https://adventuretime.top/" id="openSeriesLinkBtn" target="_blank" rel="noopener noreferrer" class="btn-official-link">
+                  Открыть S01E01 на adventuretime.top
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="seasons-browser">
+            <div class="season-tabs" id="seasonTabs"></div>
+            <div class="season-summary-box" id="seasonSummaryBox"></div>
+            <div class="season-episodes-scroll" id="seasonEpisodesList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         РАЗДЕЛ ПРИНЦЕССЫ И ПРАВИТЕЛЬНИЦЫ
+         ====================================================================== -->
+    <section class="archive-section" id="princesses">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-kicker">Совет и правительницы</span>
+          <h2 class="section-title">Раздел принцесс Земли Ууу и Ледяная Принцесса</h2>
+          <p class="section-desc">
+            Ключевые принцессы королевств Ууу, стихийные правительницы и Ледяная Принцесса (Ледяная Королева из вселенной Фионны и Кейк). Нажмите на любую карточку для подробного досье.
+          </p>
+        </div>
+
+        <div class="cards-grid-3" id="princessesGrid"></div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         2. ГЕРОИ И СУЩЕСТВА
+         ====================================================================== -->
+    <section class="archive-section alt-bg" id="characters">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-kicker">Каталог жителей</span>
+          <h2 class="section-title">Герои и существа Земли Ууу</h2>
+          <p class="section-desc">
+            Ищите персонажей по имени или роли, фильтруйте по фракциям и открывайте подробное досье каждого героя.
+          </p>
+        </div>
+
+        <div class="filter-toolbar">
+          <div class="kingdom-filters" id="kingdomFilterGroup" role="group" aria-label="Фильтр по фракциям">
+            <button type="button" class="filter-chip active" data-group="all">Все</button>
+            <button type="button" class="filter-chip" data-group="treehouse">Домик на дереве</button>
+            <button type="button" class="filter-chip" data-group="candy">Конфетное</button>
+            <button type="button" class="filter-chip" data-group="nightosphere">Ночесфера</button>
+            <button type="button" class="filter-chip" data-group="ice">Ледяное и др.</button>
+          </div>
+
+          <div class="search-wrapper">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="search" id="characterSearchInput" class="search-field" placeholder="Поиск героя..." aria-label="Поиск героя" />
+            <button type="button" class="clear-search-btn" id="clearSearchBtn" aria-label="Очистить поиск">×</button>
+          </div>
+        </div>
+
+        <div class="cards-grid-3" id="charactersGrid"></div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         3. КАРТА И КОРОЛЕВСТВА УУУ
+         ====================================================================== -->
+    <section class="archive-section" id="kingdoms">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-kicker">География и лор</span>
+          <h2 class="section-title">Карта и королевства Земли Ууу</h2>
+          <p class="section-desc">
+            Переключайтесь между регионами, чтобы изучить их правителей, особенности и ключевые факты из истории мира.
+          </p>
+        </div>
+
+        <div class="kingdoms-layout">
+          <div class="kingdom-list" id="kingdomList"></div>
+          <div class="kingdom-viewer" id="kingdomViewer"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         4. АРСЕНАЛ И АРТЕФАКТЫ
+         ====================================================================== -->
+    <section class="archive-section alt-bg" id="artifacts">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-kicker">Легендарные реликвии</span>
+          <h2 class="section-title">Арсенал и артефакты</h2>
+          <p class="section-desc">
+            Мечи Финна, древние книги и магические реликвии, определившие судьбу Земли Ууу. Нажмите на предмет для подробностей.
+          </p>
+        </div>
+
+        <div class="cards-grid-3" id="artifactsGrid"></div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         5. ДНЕВНИК ИСКАТЕЛЯ ПРИКЛЮЧЕНИЙ
+         ====================================================================== -->
+    <section class="archive-section" id="diary">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-kicker">Личный прогресс и заметки</span>
+          <h2 class="section-title">Дневник искателя приключений</h2>
+          <p class="section-desc">
+            Отмечайте знаковые эпизоды сериала и сохраняйте собственные заметки по лору. Данные автоматически хранятся в localStorage браузера.
+          </p>
+        </div>
+
+        <div class="diary-layout">
+          <div class="diary-panel">
+            <div class="diary-panel-head">
+              <div>
+                <h3 class="diary-panel-title">Ключевые сюжетные эпизоды</h3>
+                <span style="font-size: 0.82rem; color: var(--text-on-light-secondary);" id="episodeProgressText">Просмотрено 0 из 8</span>
+              </div>
+              <button type="button" class="btn-reset-all" id="resetProgressBtn">Сбросить отметки</button>
+            </div>
+
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" id="episodeProgressBar" style="width: 0%;"></div>
+            </div>
+
+            <div class="episode-list" id="episodesList"></div>
+          </div>
+
+          <div class="diary-panel">
+            <div class="diary-panel-head">
+              <h3 class="diary-panel-title">Заметки о Земле Ууу</h3>
+            </div>
+
+            <form class="note-form" id="noteForm" novalidate>
+              <input type="text" id="noteTitleInput" class="note-input" placeholder="Заголовок заметки (например: Теория о Комете)" maxlength="90" aria-label="Заголовок заметки" />
+              <textarea id="noteTextInput" class="note-textarea" placeholder="Напишите свои наблюдения, теории или список серий..." maxlength="600" aria-label="Текст заметки"></textarea>
+              <div class="form-error" id="noteFormError">Пожалуйста, заполните заголовок и текст заметки.</div>
+              <button type="submit" class="btn-submit-note">Сохранить в дневник</button>
+            </form>
+
+            <div class="notes-list" id="notesList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <strong>Архив Земли Ууу (Land of Ooo Archive)</strong> — фанатский путеводитель и кинозал по мотивам «Времени приключений».
+      </div>
+      <div class="footer-links">
+        <a href="#cinema">Кинозал</a>
+        <a href="#princesses">Принцессы</a>
+        <a href="#characters">Герои</a>
+        <a href="#kingdoms">Королевства</a>
+        <a href="#artifacts">Арсенал</a>
+        <a href="#diary">Дневник</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Модальное окно детального досье -->
+  <div class="modal-backdrop" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-dialog">
+      <button type="button" class="modal-close" id="closeModalBtn" aria-label="Закрыть окно">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <!-- Контейнер уведомлений -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      const toastContainer = document.getElementById('toastContainer');
+      function showToast(message) {
+        if (!toastContainer) return;
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>${escapeHtml(message)}</span>
+        `;
+        toastContainer.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(8px)';
+          toast.style.transition = 'all 220ms ease';
+          setTimeout(() => toast.remove(), 240);
+        }, 2600);
+      }
+
+      // Мобильное меню
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const mobileDrawer = document.getElementById('mobileDrawer');
+      if (mobileMenuToggle && mobileDrawer) {
+        mobileMenuToggle.addEventListener('click', () => {
+          const isOpen = mobileDrawer.classList.toggle('open');
+          mobileMenuToggle.setAttribute('aria-expanded', String(isOpen));
+        });
+        mobileDrawer.querySelectorAll('a').forEach((link) => {
+          link.addEventListener('click', () => {
+            mobileDrawer.classList.remove('open');
+            mobileMenuToggle.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+
+      // 1. Генератор цитат
+      const QUOTES = [
+        {
+          text: '«Пока мы живы, мы можем исправить всё, что натворили. Главное — не сдаваться и идти вперёд».',
+          speaker: 'Финн Парнишка',
+          episode: 'Хроники Домика на дереве'
+        },
+        {
+          text: '«Иногда нужно просто расслабиться, сделать сэндвич с беконом и понять, что всё встанет на свои места».',
+          speaker: 'Джейк Пёс',
+          episode: 'Приключения в Земле Ууу'
+        },
+        {
+          text: '«Наука — это не магия, хотя для непосвящённых они выглядят почти одинаково».',
+          speaker: 'Принцесса Бубльгум',
+          episode: 'Конфетное Королевство'
+        },
+        {
+          text: '«Время меняет всех и всё — важно лишь то, какую музыку ты оставляешь после себя».',
+          speaker: 'Марселин Абадир',
+          episode: 'Ночесфера и Ууу'
+        },
+        {
+          text: '«Даже в самых ледяных воспоминаниях прячется человек, который когда-то очень любил».',
+          speaker: 'Саймон Петриков',
+          episode: 'Тайны Ледяного Королевства'
+        },
+        {
+          text: '«Кто хочет поиграть в видеоигры? БМО готов к новым приключениям!»',
+          speaker: 'БМО',
+          episode: 'Домик на дереве'
+        }
+      ];
+
+      let quoteIdx = 0;
+      const quoteTextEl = document.getElementById('quoteText');
+      const quoteSpeakerEl = document.getElementById('quoteSpeaker');
+      const quoteEpisodeEl = document.getElementById('quoteEpisode');
+      const nextQuoteBtn = document.getElementById('nextQuoteBtn');
+
+      if (nextQuoteBtn && quoteTextEl && quoteSpeakerEl && quoteEpisodeEl) {
+        nextQuoteBtn.addEventListener('click', () => {
+          quoteIdx = (quoteIdx + 1) % QUOTES.length;
+          const q = QUOTES[quoteIdx];
+          nextQuoteBtn.classList.remove('spin');
+          void nextQuoteBtn.offsetWidth;
+          nextQuoteBtn.classList.add('spin');
+          quoteTextEl.style.opacity = '0';
+          setTimeout(() => {
+            quoteTextEl.textContent = q.text;
+            quoteSpeakerEl.textContent = q.speaker;
+            quoteEpisodeEl.textContent = q.episode;
+            quoteTextEl.style.opacity = '1';
+          }, 120);
+        });
+      }
+
+      // 2. Каталог всех 10 сезонов и локальный <canvas>-проигрыватель
+      const SEASONS = [
+        {
+          season: 1,
+          title: 'Сезон 1: Начало приключений',
+          year: '2010',
+          totalEpisodes: 26,
+          skyTop: '#0284c7',
+          skyBottom: '#bae6fd',
+          accent: '#facc15',
+          episodes: [
+            { num: 1, title: 'Заварушка на подвесном стуле', desc: 'Финн и Джейк отправляются в опасное путешествие, чтобы освободить друзей от скуки и графа.' },
+            { num: 2, title: 'Проблемы в пупырчатом пространстве', desc: 'Первая встреча с Принцессой Пупыркой и анти-ядом против пупырчатых трансформаций.' },
+            { num: 5, title: 'Энхиридион!', desc: 'Герои проходят испытания на горе, чтобы получить легендарную книгу героев.' },
+            { num: 12, title: 'Пришёл из Ночесферы', desc: 'Знакомство с Марселин и её отцом Хансоном Абадиром.' }
+          ]
+        },
+        {
+          season: 2,
+          title: 'Сезон 2: Лич и тайны Ууу',
+          year: '2010–2011',
+          totalEpisodes: 26,
+          skyTop: '#0f172a',
+          skyBottom: '#1e3a8a',
+          accent: '#38bdf8',
+          episodes: [
+            { num: 1, title: 'Пришло из другого измерения', desc: 'Пробуждение древнего зла и первые признаки надвигающейся угрозы.' },
+            { num: 25, title: 'Смертельная мощь', desc: 'Путешествие в Кристальное Измерение и раскрытие истинной природы Лича.' },
+            { num: 26, title: 'Его герой', desc: 'Финал второго сезона и решающее столкновение с Личем.' }
+          ]
+        },
+        {
+          season: 3,
+          title: 'Сезон 3: Прошлое Саймона и Марселин',
+          year: '2011–2012',
+          totalEpisodes: 26,
+          skyTop: '#312e81',
+          skyBottom: '#c084fc',
+          accent: '#f472b6',
+          episodes: [
+            { num: 10, title: 'Что было потеряно', desc: 'Музыкальное противостояние в замке Марселин и важные тайны прошлого.' },
+            { num: 19, title: 'Холли Джолли Тайны', desc: 'Видеокассеты открывают трагическую историю Саймона Петрикова.' },
+            { num: 25, title: 'Папаша — чудовище', desc: 'Поездка в Ночесферу и испытание для Марселин.' }
+          ]
+        },
+        {
+          season: 4,
+          title: 'Сезон 4: Огненная принцесса и перемены',
+          year: '2012',
+          totalEpisodes: 26,
+          skyTop: '#7c2d12',
+          skyBottom: '#fb923c',
+          accent: '#fde047',
+          episodes: [
+            { num: 5, title: 'Пылающая', desc: 'Знакомство Финна с Огненной Принцессой.' },
+            { num: 25, title: 'Я помню тебя', desc: 'Саймон и Марселин вместе перечитывают старые записи.' },
+            { num: 26, title: 'Лич', desc: 'Лич вырывается из янтаря и начинает новый поход.' }
+          ]
+        },
+        {
+          season: 5,
+          title: 'Сезон 5: Большой сезон приключений',
+          year: '2012–2014',
+          totalEpisodes: 52,
+          skyTop: '#1e293b',
+          skyBottom: '#38bdf8',
+          accent: '#facc15',
+          episodes: [
+            { num: 1, title: 'Финн Человек', desc: 'Альтернативная реальность без Короля Лича и новая судьба мира.' },
+            { num: 2, title: 'Джейк Пёс', desc: 'Вторая часть истории о желании Призмо и мультивселенной.' },
+            { num: 48, title: 'Второй рассвет', desc: 'Тайна происхождение Джейка и его космического отца.' }
+          ]
+        },
+        {
+          season: 6,
+          title: 'Сезон 6: Космос и философия',
+          year: '2014–2015',
+          totalEpisodes: 43,
+          skyTop: '#090d16',
+          skyBottom: '#4338ca',
+          accent: '#38bdf8',
+          episodes: [
+            { num: 2, title: 'Побег из Цитадели', desc: 'Встреча с Мартином и побег из космической тюрьмы.' },
+            { num: 42, title: 'Горячая картошка', desc: 'Подготовка к финальному космическому столкновению.' },
+            { num: 43, title: 'Комета', desc: 'Встреча с Катализаторной Кометой и выбор Финна.' }
+          ]
+        },
+        {
+          season: 7,
+          title: 'Сезон 7: Острова и вампиры',
+          year: '2015–2016',
+          totalEpisodes: 26,
+          skyTop: '#134e4a',
+          skyBottom: '#2dd4bf',
+          accent: '#facc15',
+          episodes: [
+            { num: 6, title: 'Ставки: Вампир над ней', desc: 'Начало мини-серии о королевам вампиров и прошлом Марселин.' },
+            { num: 24, title: 'Переход', desc: 'Тайна появления Марселин как охотницы на вампиров.' }
+          ]
+        },
+        {
+          season: 8,
+          title: 'Сезон 8: Элементы и Острова',
+          year: '2017',
+          totalEpisodes: 27,
+          skyTop: '#1e1b4b',
+          skyBottom: '#6366f1',
+          accent: '#38bdf8',
+          episodes: [
+            { num: 1, title: 'Два меча', desc: 'Рождение Травяного Финна и новые испытания.' },
+            { num: 14, title: 'Элементаль', desc: 'Великое превращение королевств Ууу под властью стихий.' }
+          ]
+        },
+        {
+          season: 9,
+          title: 'Сезон 9: Путь к финалу',
+          year: '2017',
+          totalEpisodes: 14,
+          skyTop: '#1e293b',
+          skyBottom: '#0ea5e9',
+          accent: '#fde047',
+          episodes: [
+            { num: 1, title: 'Сфера хаоса', desc: 'Дальнейший путь героев к разгадке древних тайн.' },
+            { num: 14, title: 'Ураган', desc: 'Подготовка к решающей битве за Землю Ууу.' }
+          ]
+        },
+        {
+          season: 10,
+          title: 'Сезон 10: Приходи со мной',
+          year: '2018',
+          totalEpisodes: 16,
+          skyTop: '#0f172a',
+          skyBottom: '#38bdf8',
+          accent: '#facc15',
+          episodes: [
+            { num: 13, title: 'Приходи со мной (Часть 1)', desc: 'Начало Великой Войны Жвачки и пробуждение Гумболда.' },
+            { num: 16, title: 'Приходи со мной (Финал)', desc: 'Кульминация истории Финна, Джейка, БМО и всей Земли Ууу.' }
+          ]
+        }
+      ];
+
+      const WATCHED_EPISODES_KEY = 'ooo_cinema_watched_v1';
+      let watchedEpisodes = new Set();
+      try {
+        const saved = JSON.parse(localStorage.getItem(WATCHED_EPISODES_KEY) || '[]');
+        if (Array.isArray(saved)) watchedEpisodes = new Set(saved);
+      } catch (err) {
+        watchedEpisodes = new Set();
+      }
+
+      function saveWatchedEpisodes() {
+        try {
+          localStorage.setItem(WATCHED_EPISODES_KEY, JSON.stringify(Array.from(watchedEpisodes)));
+        } catch (err) {
+          // ignore storage quota errors
+        }
+      }
+
+      let activeSeasonIdx = 0;
+      let activeEpisode = SEASONS[0].episodes[0];
+      let isPlaying = true;
+      let sceneProgress = 0.15;
+
+      const seasonTabsEl = document.getElementById('seasonTabs');
+      const seasonSummaryBoxEl = document.getElementById('seasonSummaryBox');
+      const seasonEpisodesListEl = document.getElementById('seasonEpisodesList');
+      const cinemaEpisodeBadgeEl = document.getElementById('cinemaEpisodeBadge');
+      const cinemaEpisodeTitleEl = document.getElementById('cinemaEpisodeTitle');
+      const cinemaEpisodeDescEl = document.getElementById('cinemaEpisodeDesc');
+      const openSeriesLinkBtn = document.getElementById('openSeriesLinkBtn');
+      const markEpisodeWatchedBtn = document.getElementById('markEpisodeWatchedBtn');
+      const cinemaCanvas = document.getElementById('cinemaCanvas');
+      const cinemaPlayBtn = document.getElementById('cinemaPlayBtn');
+      const cinemaTimelineTrack = document.getElementById('cinemaTimelineTrack');
+      const cinemaTimelineFill = document.getElementById('cinemaTimelineFill');
+      const cinemaTimeLabel = document.getElementById('cinemaTimeLabel');
+
+      function getEpisodeKey(seasonNum, epNum) {
+        return `S${seasonNum}E${epNum}`;
+      }
+
+      function updateWatchedButtonState() {
+        if (!markEpisodeWatchedBtn || !activeEpisode) return;
+        const season = SEASONS[activeSeasonIdx];
+        const key = getEpisodeKey(season.season, activeEpisode.num);
+        const isWatched = watchedEpisodes.has(key);
+        markEpisodeWatchedBtn.textContent = isWatched ? 'Просмотрено ✓' : 'Отметить просмотренным';
+      }
+
+      function selectEpisode(seasonIdx, epObj) {
+        activeSeasonIdx = seasonIdx;
+        activeEpisode = epObj;
+        sceneProgress = 0.05;
+        isPlaying = true;
+        if (cinemaPlayBtn) cinemaPlayBtn.textContent = 'II';
+
+        const season = SEASONS[activeSeasonIdx];
+        const epCode = `S${String(season.season).padStart(2, '0')}E${String(epObj.num).padStart(2, '0')}`;
+
+        if (cinemaEpisodeBadgeEl) {
+          cinemaEpisodeBadgeEl.textContent = `Сезон ${season.season} (${season.year}) • Серия ${epObj.num}`;
+        }
+        if (cinemaEpisodeTitleEl) {
+          cinemaEpisodeTitleEl.textContent = `«${epObj.title}»`;
+        }
+        if (cinemaEpisodeDescEl) {
+          cinemaEpisodeDescEl.textContent = epObj.desc;
+        }
+        if (openSeriesLinkBtn) {
+          openSeriesLinkBtn.innerHTML = `
+            Открыть ${escapeHtml(epCode)} на adventuretime.top
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+          `;
+        }
+
+        updateWatchedButtonState();
+        renderSeasonEpisodes();
+        renderCinemaCanvasFrame();
+      }
+
+      function renderSeasonTabs() {
+        if (!seasonTabsEl) return;
+        seasonTabsEl.innerHTML = SEASONS.map(
+          (s, idx) => `
+            <button type="button" class="season-tab-btn ${idx === activeSeasonIdx ? 'active' : ''}" data-season-idx="${idx}">
+              С${s.season}
+            </button>
+          `
+        ).join('');
+      }
+
+      function renderSeasonEpisodes() {
+        const season = SEASONS[activeSeasonIdx];
+        if (seasonSummaryBoxEl) {
+          seasonSummaryBoxEl.innerHTML = `
+            <div class="season-summary-title">${escapeHtml(season.title)}</div>
+            <div class="season-summary-meta">Годы выхода: ${escapeHtml(season.year)} • Всего в сезоне: ${season.totalEpisodes} серий</div>
+          `;
+        }
+
+        if (!seasonEpisodesListEl) return;
+        seasonEpisodesListEl.innerHTML = season.episodes
+          .map((ep) => {
+            const isPlayingEp = activeEpisode && activeEpisode.num === ep.num;
+            const isWatched = watchedEpisodes.has(getEpisodeKey(season.season, ep.num));
+            return `
+              <button type="button" class="cinema-ep-btn ${isPlayingEp ? 'playing' : ''}" data-ep-num="${ep.num}">
+                <div>
+                  <span class="cinema-ep-num">Сезон ${season.season} • Серия ${ep.num} ${isWatched ? '• Просмотрено' : ''}</span>
+                  <span class="cinema-ep-title">${escapeHtml(ep.title)}</span>
+                </div>
+                <span style="font-size: 0.78rem; font-weight: 700;">${isPlayingEp ? 'В плеере' : 'Смотреть'}</span>
+              </button>
+            `;
+          })
+          .join('');
+      }
+
+      if (seasonTabsEl) {
+        seasonTabsEl.addEventListener('click', (e) => {
+          const btn = e.target.closest('.season-tab-btn');
+          if (!btn) return;
+          const idx = Number(btn.dataset.seasonIdx);
+          if (!Number.isNaN(idx) && SEASONS[idx]) {
+            renderSeasonTabs();
+            selectEpisode(idx, SEASONS[idx].episodes[0]);
+          }
+        });
+      }
+
+      if (seasonEpisodesListEl) {
+        seasonEpisodesListEl.addEventListener('click', (e) => {
+          const btn = e.target.closest('.cinema-ep-btn');
+          if (!btn) return;
+          const epNum = Number(btn.dataset.epNum);
+          const season = SEASONS[activeSeasonIdx];
+          const found = season.episodes.find((item) => item.num === epNum);
+          if (found) {
+            selectEpisode(activeSeasonIdx, found);
+          }
+        });
+      }
+
+      if (markEpisodeWatchedBtn) {
+        markEpisodeWatchedBtn.addEventListener('click', () => {
+          const season = SEASONS[activeSeasonIdx];
+          const key = getEpisodeKey(season.season, activeEpisode.num);
+          if (watchedEpisodes.has(key)) {
+            watchedEpisodes.delete(key);
+            showToast(`Отметка снята: ${key}`);
+          } else {
+            watchedEpisodes.add(key);
+            showToast(`Отмечено как просмотренное: ${key}`);
+          }
+          saveWatchedEpisodes();
+          updateWatchedButtonState();
+          renderSeasonEpisodes();
+        });
+      }
+
+      if (cinemaPlayBtn) {
+        cinemaPlayBtn.addEventListener('click', () => {
+          isPlaying = !isPlaying;
+          cinemaPlayBtn.textContent = isPlaying ? 'II' : '▶';
+        });
+      }
+
+      if (cinemaTimelineTrack) {
+        cinemaTimelineTrack.addEventListener('click', (e) => {
+          const rect = cinemaTimelineTrack.getBoundingClientRect();
+          if (rect.width <= 0) return;
+          const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+          sceneProgress = ratio;
+          renderCinemaCanvasFrame();
+        });
+      }
+
+      function renderCinemaCanvasFrame() {
+        if (!cinemaCanvas) return;
+        const parent = cinemaCanvas.parentElement;
+        const w = parent ? parent.clientWidth : 640;
+        const h = parent ? parent.clientHeight : 360;
+        if (w <= 0 || h <= 0) return;
+
+        if (cinemaCanvas.width !== w || cinemaCanvas.height !== h) {
+          cinemaCanvas.width = w;
+          cinemaCanvas.height = h;
+        }
+
+        const ctx = cinemaCanvas.getContext('2d');
+        if (!ctx) return;
+
+        const season = SEASONS[activeSeasonIdx] || SEASONS[0];
+        const grad = ctx.createLinearGradient(0, 0, 0, h);
+        grad.addColorStop(0, season.skyTop);
+        grad.addColorStop(1, season.skyBottom);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, h);
+
+        // Движущиеся облака и солнце/луна Земли Ууу
+        const drift = (sceneProgress * w * 1.4) % (w + 180);
+        ctx.fillStyle = season.accent;
+        ctx.globalAlpha = 0.85;
+        ctx.beginPath();
+        ctx.arc(w * 0.8, h * 0.24, Math.min(w, h) * 0.09, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.22)';
+        for (let i = 0; i < 3; i++) {
+          const cx = ((drift + i * 240) % (w + 160)) - 80;
+          const cy = h * (0.2 + i * 0.11);
+          ctx.beginPath();
+          ctx.roundRect(cx, cy, 110, 24, 12);
+          ctx.fill();
+        }
+
+        // Холмы Земли Ууу
+        ctx.fillStyle = '#15803d';
+        ctx.beginPath();
+        ctx.moveTo(0, h * 0.76);
+        ctx.quadraticCurveTo(w * 0.28, h * 0.62, w * 0.56, h * 0.78);
+        ctx.quadraticCurveTo(w * 0.82, h * 0.66, w, h * 0.75);
+        ctx.lineTo(w, h);
+        ctx.lineTo(0, h);
+        ctx.closePath();
+        ctx.fill();
+
+        // Информационный экран внутри сцены
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.72)';
+        ctx.beginPath();
+        ctx.roundRect(20, 20, Math.min(w - 40, 440), 82, 12);
+        ctx.fill();
+
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = 'bold 13px Inter, sans-serif';
+        ctx.fillText(`СЕЗОН ${season.season} • СЕРИЯ ${activeEpisode.num}`, 34, 44);
+
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 17px Inter, sans-serif';
+        ctx.fillText(activeEpisode.title, 34, 68);
+
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = '12px Inter, sans-serif';
+        ctx.fillText('Локальный проигрыватель сцен • Нажмите ниже для перехода на adventuretime.top', 34, 88);
+
+        // Обновление таймлайна
+        const totalSeconds = 660;
+        const currentSeconds = Math.floor(sceneProgress * totalSeconds);
+        const curMin = String(Math.floor(currentSeconds / 60)).padStart(2, '0');
+        const curSec = String(currentSeconds % 60).padStart(2, '0');
+        if (cinemaTimelineFill) {
+          cinemaTimelineFill.style.width = `${(sceneProgress * 100).toFixed(1)}%`;
+        }
+        if (cinemaTimeLabel) {
+          cinemaTimeLabel.textContent = `${curMin}:${curSec} / 11:00 • S${season.season}E${activeEpisode.num}`;
+        }
+      }
+
+      setInterval(() => {
+        if (isPlaying) {
+          sceneProgress += 0.004;
+          if (sceneProgress > 1) sceneProgress = 0;
+          renderCinemaCanvasFrame();
+        }
+      }, 120);
+
+      window.addEventListener('resize', renderCinemaCanvasFrame);
+
+      // 3. Принцессы, герои, королевства, артефакты и дневник
+      const CHARACTERS = [
+        {
+          id: 'finn',
+          name: 'Финн Парнишка',
+          role: 'Герой Земли Ууу и искатель приключений',
+          group: 'treehouse',
+          groupLabel: 'Домик на дереве',
+          species: 'Человек',
+          weapon: 'Мечи (Скарлет, Травяной меч, Меч Финна)',
+          accentBg: '#e0f2fe',
+          accentColor: '#0284c7',
+          sceneSvg: `<svg class="scene-art" viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="150" fill="#bae6fd"/><circle cx="70" cy="36" r="18" fill="#fef08a"/><path d="M0 116 Q95 96 190 118 T360 110 L360 150 L0 150 Z" fill="#4ade80"/><g transform="translate(148, 22)"><rect x="14" y="54" width="36" height="44" rx="10" fill="#0284c7"/><path d="M12 36 Q12 8 32 8 Q52 8 52 36 L52 54 L12 54 Z" fill="#ffffff" stroke="#0f172a" stroke-width="2.2"/><polygon points="12,18 4,10 12,28" fill="#ffffff" stroke="#0f172a" stroke-width="2"/><polygon points="52,18 60,10 52,28" fill="#ffffff" stroke="#0f172a" stroke-width="2"/><rect x="19" y="25" width="26" height="22" rx="9" fill="#fed7aa"/><circle cx="26" cy="35" r="2.6" fill="#0f172a"/><circle cx="38" cy="35" r="2.6" fill="#0f172a"/></g></svg>`,
+          shortDesc: 'Последний известный человек в Земле Ууу, верный защитник слабых и лучший друг Джейка.',
+          bio: 'Финн вырос в Домике на дереве вместе с Джейком. Он обладает обострённым чувством справедливости, смелостью и готовностью бросить вызов любому злу — от Ледяного Короля до древнего Лича.',
+          traits: ['Неутомимый искатель приключений', 'Мастер владения мечами', 'Верный друг Джейка', 'Участник событий в космосе']
+        },
+        {
+          id: 'jake',
+          name: 'Джейк Пёс',
+          role: 'Магический пёс и брат Финна',
+          group: 'treehouse',
+          groupLabel: 'Домик на дереве',
+          species: 'Магический пёс-мутант',
+          weapon: 'Растяжение тела и смена формы',
+          accentBg: '#fef9c3',
+          accentColor: '#ca8a04',
+          sceneSvg: `<svg class="scene-art" viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="150" fill="#fef08a"/><path d="M0 118 Q120 102 240 120 T360 112 L360 150 L0 150 Z" fill="#86efac"/><g transform="translate(142, 26)"><rect x="8" y="14" width="60" height="76" rx="28" fill="#facc15" stroke="#0f172a" stroke-width="2.2"/><ellipse cx="38" cy="46" rx="18" ry="12" fill="#fef08a"/><circle cx="26" cy="34" r="6" fill="#ffffff" stroke="#0f172a" stroke-width="1.8"/><circle cx="50" cy="34" r="6" fill="#ffffff" stroke="#0f172a" stroke-width="1.8"/><circle cx="27" cy="34" r="2.5" fill="#0f172a"/><circle cx="49" cy="34" r="2.5" fill="#0f172a"/><ellipse cx="38" cy="42" rx="6" ry="4" fill="#0f172a"/></g></svg>`,
+          shortDesc: 'Мудрый и расслабленный пёс, способный растягиваться и менять форму для любых задач.',
+          bio: 'Джейк умеет растягивать любые части тела, превращаться в ключи, щиты или гигантские фигуры. Он ценит спокойные вечера, вкусную еду и поддерживает Финна в самых трудных решениях.',
+          traits: ['Магическая эластичность', 'Спокойный философский настрой', 'Мастер кулинарии', 'Отец пятерых щенков-единорогов']
+        },
+        {
+          id: 'pb',
+          name: 'Принцесса Бубльгум',
+          role: 'Правительница Конфетного Королевства',
+          group: 'candy',
+          groupLabel: 'Конфетное',
+          species: 'Конфетный элементаль',
+          weapon: 'Научные изобретения и конфетная гвардия',
+          accentBg: '#fce7f3',
+          accentColor: '#db2777',
+          sceneSvg: `<svg class="scene-art" viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="150" fill="#fbcfe8"/><g transform="translate(146, 20)"><path d="M10 42 Q10 10 34 10 Q58 10 58 42 L64 110 L4 110 Z" fill="#f472b6" stroke="#0f172a" stroke-width="2"/><polygon points="22,12 26,3 34,10 42,3 46,12" fill="#facc15" stroke="#0f172a" stroke-width="1.8"/><rect x="18" y="24" width="32" height="28" rx="12" fill="#fbcfe8" stroke="#0f172a" stroke-width="2"/><circle cx="28" cy="36" r="2.5" fill="#0f172a"/><circle cx="40" cy="36" r="2.5" fill="#0f172a"/></g></svg>`,
+          shortDesc: 'Гениальный учёный и правительница, создавшая Конфетное Королевство и его жителей.',
+          bio: 'Бубльгум сочетает облик сказочной принцессы с глубокими знаниями физики, генетики и инженерии. На протяжении столетий она оберегает своих подданных и исследует природу Земли Ууу.',
+          traits: ['Выдающийся учёный', 'Элементаль Конфетного царства', 'Стратег и правительница', 'Хранительница архивов Ууу']
+        },
+        {
+          id: 'flame',
+          name: 'Огненная Принцесса (Фиби)',
+          role: 'Правительница Огненного Королевства',
+          group: 'ice',
+          groupLabel: 'Ледяное и др.',
+          species: 'Огненный элементаль',
+          weapon: 'Пирокинез и пламенный клинок',
+          accentBg: '#ffedd5',
+          accentColor: '#ea580c',
+          sceneSvg: `<svg class="scene-art" viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="150" fill="#fed7aa"/><g transform="translate(146, 18)"><path d="M34 6 C52 24 62 48 56 76 L62 112 L6 112 L12 76 C6 48 16 24 34 6 Z" fill="#f97316" stroke="#0f172a" stroke-width="2"/><polygon points="23,28 28,18 34,26 40,18 45,28" fill="#facc15" stroke="#0f172a" stroke-width="1.6"/><circle cx="28" cy="42" r="2.5" fill="#0f172a"/><circle cx="40" cy="42" r="2.5" fill="#0f172a"/></g></svg>`,
+          shortDesc: 'Гордая и справедливая правительница Огненного Королевства, реформировавшая законы пламени.',
+          bio: 'Фиби обладает огромной стихийной мощью, но стремится к честному правлению и балансу. Под её руководством Огненное Королевство перешло от хаоса к порядку и честным поединкам.',
+          traits: ['Огненный элементаль', 'Справедливый монарх', 'Сильный боец в ближнем бою', 'Защитница подданных']
+        },
+        {
+          id: 'lsp',
+          name: 'Принцесса Пупырка',
+          role: 'Принцесса Пупырчатого Королевства',
+          group: 'candy',
+          groupLabel: 'Конфетное',
+          species: 'Пупырчатый житель',
+          weapon: 'Пупырчатая магия и харизма',
+          accentBg: '#f3e8ff',
+          accentColor: '#9333ea',
+          sceneSvg: `<svg class="scene-art" viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="150" fill="#e9d5ff"/><g transform="translate(142, 24)"><circle cx="38" cy="54" r="34" fill="#d8b4fe" stroke="#0f172a" stroke-width="2.2"/><polygon points="28,22 33,10 38,20 43,10 48,22" fill="#facc15" stroke="#0f172a" stroke-width="1.8"/><circle cx="14" cy="48" r="7" fill="#c084fc" stroke="#0f172a" stroke-width="1.8"/><circle cx="62" cy="48" r="7" fill="#c084fc" stroke="#0f172a" stroke-width="1.8"/><circle cx="29" cy="46" r="2.5" fill="#0f172a"/><circle cx="47" cy="46" r="2.5" fill="#0f172a"/></g></svg>`,
+          shortDesc: 'Драматичная и непредсказуемая принцесса из Пупырчатого пространства.',
+          bio: 'Принцесса Пупырка легко превращает любую ситуацию в яркую историю. Несмотря на капризность и любовь к сплетням, она способна на неожиданные и важные поступки.',
+          traits: ['Жительница Пупырчатого пространства', 'Яркий характер', 'Знаток сплетен Ууу', 'Участница ключевых событий']
+        },
+        {
+          id: 'slimeprincess',
+          name: 'Слизистая Принцесса',
+          role: 'Правительница Слизистого Королевства',
+          group: 'candy',
+          groupLabel: 'Конфетное',
+          species: 'Слизистое существо',
+          weapon: 'Пластичность тела и научные опыты',
+          accentBg: '#dcfce7',
+          accentColor: '#16a34a',
+          sceneSvg: `<svg class="scene-art" viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="150" fill="#bbf7d0"/><g transform="translate(142, 26)"><path d="M12 88 Q10 32 38 28 Q66 32 64 88 Z" fill="#4ade80" stroke="#0f172a" stroke-width="2.2"/><polygon points="28,28 33,16 38,26 43,16 48,28" fill="#facc15" stroke="#0f172a" stroke-width="1.8"/><circle cx="29" cy="52" r="2.6" fill="#0f172a"/><circle cx="47" cy="52" r="2.6" fill="#0f172a"/></g></svg>`,
+          shortDesc: 'Правительница Слизистого Королевства, участница совета правителей Земли Ууу.',
+          bio: 'Слизистая Принцесса возглавляет Слизистое Королевство и регулярно участвует в важных переговорах и союзах между королевствами Земли Ууу.',
+          traits: ['Правительница Слизистого Королевства', 'Гибкая слизистая форма', 'Участница совета Ууу']
+        },
+        {
+          id: 'icequeen',
+          name: 'Ледяная Принцесса / Ледяная Королева',
+          role: 'Ледяная правительница вселенной Фионны и Кейк',
+          group: 'ice',
+          groupLabel: 'Ледяное и др.',
+          species: 'Ледяная правительница',
+          weapon: 'Криокинез и ледяные бури',
+          accentBg: '#e0f2fe',
+          accentColor: '#0284c7',
+          sceneSvg: `<svg class="scene-art" viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="150" fill="#bae6fd"/><g transform="translate(144, 16)"><path d="M12 36 Q12 8 36 8 Q60 8 60 36 L66 116 L6 116 Z" fill="#1e3a8a" stroke="#0f172a" stroke-width="2.2"/><polygon points="24,14 27,4 36,12 45,4 48,14" fill="#facc15" stroke="#0f172a" stroke-width="1.8"/><rect x="20" y="22" width="32" height="30" rx="13" fill="#38bdf8" stroke="#0f172a" stroke-width="2"/><rect x="21" y="30" width="14" height="9" rx="3" fill="#090d16" stroke="#0f172a" stroke-width="1.6"/><rect x="37" y="30" width="14" height="9" rx="3" fill="#090d16" stroke="#0f172a" stroke-width="1.6"/><line x1="35" y1="33" x2="37" y2="33" stroke="#090d16" stroke-width="2"/><path d="M16 56 L56 56 L62 116 L10 116 Z" fill="#0284c7" stroke="#0f172a" stroke-width="2"/></g></svg>`,
+          shortDesc: 'Образ ледяной правительницы с тёмно-синими волосами, сине-голубой кожей и в тёмных очках.',
+          bio: 'Ледяная Принцесса / Ледяная Королева представлена с тёмно-синими волосами, сине-голубой кожей и тёмными очками; в основном каноне Земли Ууу ледяную стихию и историю короны раскрывают Саймон Петриков и Терпеливая Св. Пим.',
+          traits: ['Тёмно-синие волосы', 'Сине-голубая кожа', 'Тёмные очки', 'Магия льда и холода']
+        },
+        {
+          id: 'marceline',
+          name: 'Марселин Абадир',
+          role: 'Королева вампиров и музыкант',
+          group: 'nightosphere',
+          groupLabel: 'Ночесфера',
+          species: 'Полудемон / Вампир',
+          weapon: 'Бас-топор, левитация и невидимость',
+          accentBg: '#ede9fe',
+          accentColor: '#7c3aed',
+          sceneSvg: `<svg class="scene-art" viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="150" fill="#ddd6fe"/><g transform="translate(144, 18)"><path d="M12 38 Q12 10 36 10 Q60 10 60 38 L66 114 L6 114 Z" fill="#1e1b4b" stroke="#0f172a" stroke-width="2.2"/><rect x="20" y="26" width="32" height="28" rx="12" fill="#e2e8f0" stroke="#0f172a" stroke-width="2"/><circle cx="28" cy="38" r="2.4" fill="#0f172a"/><circle cx="44" cy="38" r="2.4" fill="#0f172a"/><path d="M16 58 L56 58 L62 114 L10 114 Z" fill="#7c3aed" stroke="#0f172a" stroke-width="2"/></g></svg>`,
+          shortDesc: 'Тысячелетняя королева вампиров, играющая на бас-гитаре из фамильного топора.',
+          bio: 'Марселин пережила эпоху Войны Грибов и становление Земли Ууу. Она умеет летать, становиться невидимой, менять облик и пишет проникновенные песни.',
+          traits: ['Тысячелетний опыт', 'Игра на бас-топоре', 'Левитация и невидимость', 'Связь с Ночесферой']
+        },
+        {
+          id: 'iceking',
+          name: 'Ледяной Король / Саймон Петриков',
+          role: 'Хранитель Ледяного Королевства',
+          group: 'ice',
+          groupLabel: 'Ледяное и др.',
+          species: 'Человек (под влиянием Короны)',
+          weapon: 'Ледяная Корона и снежная магия',
+          accentBg: '#e0f2fe',
+          accentColor: '#0369a1',
+          sceneSvg: `<svg class="scene-art" viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="150" fill="#bae6fd"/><g transform="translate(142, 20)"><polygon points="24,18 28,6 38,16 48,6 52,18" fill="#facc15" stroke="#0f172a" stroke-width="2"/><rect x="20" y="20" width="36" height="28" rx="12" fill="#93c5fd" stroke="#0f172a" stroke-width="2"/><path d="M14 48 Q38 118 62 48 Z" fill="#f8fafc" stroke="#0f172a" stroke-width="2"/></g></svg>`,
+          shortDesc: 'Трагический герой, чья память и разум были изменены силой Ледяной Короны.',
+          bio: 'Когда-то Саймон Петриков был исследователем древностей, защищавшим юную Марселин после Войны Грибов. Надев Корону ради спасения близких, он постепенно превратился в Ледяного Короля.',
+          traits: ['История Саймона Петрикова', 'Владелец Ледяной Короны', 'Магия льда и молний', 'Сложная драматичная судьба']
+        },
+        {
+          id: 'bmo',
+          name: 'БМО',
+          role: 'Живая игровая приставка и друг',
+          group: 'treehouse',
+          groupLabel: 'Домик на дереве',
+          species: 'Искусственный интеллект / Робот',
+          weapon: 'Видеоигры, камера и преданность друзьям',
+          accentBg: '#ccfbf1',
+          accentColor: '#0d9488',
+          sceneSvg: `<svg class="scene-art" viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="150" fill="#99f6e4"/><g transform="translate(144, 24)"><rect x="8" y="8" width="56" height="84" rx="10" fill="#2dd4bf" stroke="#0f172a" stroke-width="2.2"/><rect x="14" y="16" width="44" height="34" rx="6" fill="#0f172a"/><circle cx="28" cy="33" r="3" fill="#38bdf8"/><circle cx="44" cy="33" r="3" fill="#38bdf8"/><circle cx="22" cy="64" r="4" fill="#38bdf8"/><rect x="40" y="60" width="12" height="4" rx="2" fill="#facc15"/><rect x="44" y="68" width="12" height="4" rx="2" fill="#f43f5e"/></g></svg>`,
+          shortDesc: 'Очаровательный компаньон Финна и Джейка, сочетающий консоль, видеокамеру и живой характер.',
+          bio: 'БМО воспринимает игры и приключения всерьёз, умеет снимать видео, сочинять истории и оставаться рядом с друзьями в самые важные моменты.',
+          traits: ['Живой характер и воображение', 'Игровая приставка и видеокамера', 'Важная роль в хрониках Ууу']
+        },
+        {
+          id: 'lich',
+          name: 'Лич',
+          role: 'Древнее воплощение разрушения',
+          group: 'nightosphere',
+          groupLabel: 'Ночесфера',
+          species: 'Древнее зло / Нежить',
+          weapon: 'Тёмная магия и власть над разумом',
+          accentBg: '#dcfce7',
+          accentColor: '#15803d',
+          sceneSvg: `<svg class="scene-art" viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="150" fill="#bbf7d0"/><g transform="translate(144, 20)"><path d="M12 110 L20 24 Q36 10 52 24 L60 110 Z" fill="#1e293b" stroke="#0f172a" stroke-width="2"/><rect x="20" y="28" width="32" height="32" rx="10" fill="#86efac" stroke="#0f172a" stroke-width="2"/><circle cx="28" cy="42" r="4" fill="#ef4444"/><circle cx="44" cy="42" r="4" fill="#ef4444"/></g></svg>`,
+          shortDesc: 'Безжалостный древний противник жизни, возвращающийся в разных мирах и воплощениях.',
+          bio: 'Лич представляет собой одну из самых грозных сил во вселенной «Времени приключений». Его голос и воля способны подчинять других существ, если не противостоять им силой духа и дружбы.',
+          traits: ['Главный антагонист', 'Магия подчинения и тьмы', 'Связь с космическими сущностями']
+        }
+      ];
+
+      const princessesGrid = document.getElementById('princessesGrid');
+      const charactersGrid = document.getElementById('charactersGrid');
+      const filterGroup = document.getElementById('kingdomFilterGroup');
+      const searchInput = document.getElementById('characterSearchInput');
+      const clearSearchBtn = document.getElementById('clearSearchBtn');
+
+      const PRINCESS_IDS = ['pb', 'flame', 'lsp', 'slimeprincess', 'icequeen'];
+      let activeGroup = 'all';
+      let searchQuery = '';
+
+      function renderPrincesses() {
+        if (!princessesGrid) return;
+        const list = CHARACTERS.filter((c) => PRINCESS_IDS.includes(c.id));
+        princessesGrid.innerHTML = list
+          .map(
+            (char) => `
+            <article class="char-card" data-char-id="${char.id}" tabindex="0" role="button" aria-label="Открыть досье: ${escapeHtml(char.name)}">
+              <div>
+                <div class="char-scene-banner" style="background: ${char.accentBg};">
+                  ${char.sceneSvg}
+                  <span class="char-realm-badge overlay-badge">${escapeHtml(char.groupLabel)}</span>
+                </div>
+                <h3 class="char-title">${escapeHtml(char.name)}</h3>
+                <div class="char-role">${escapeHtml(char.role)}</div>
+                <p class="char-summary">${escapeHtml(char.shortDesc)}</p>
+              </div>
+              <div class="char-card-bottom">
+                <span>Досье принцессы</span>
+                <span class="open-link">Открыть →</span>
+              </div>
+            </article>
+          `
+          )
+          .join('');
+      }
+
+      function renderCharacters() {
+        if (!charactersGrid) return;
+        const q = searchQuery.trim().toLowerCase();
+        const filtered = CHARACTERS.filter((char) => {
+          const matchesGroup = activeGroup === 'all' || char.group === activeGroup;
+          const matchesSearch =
+            !q ||
+            char.name.toLowerCase().includes(q) ||
+            char.role.toLowerCase().includes(q) ||
+            char.shortDesc.toLowerCase().includes(q);
+          return matchesGroup && matchesSearch;
+        });
+
+        if (filtered.length === 0) {
+          charactersGrid.innerHTML = `
+            <div class="empty-box">
+              <h3>Ничего не найдено</h3>
+              <p>Попробуйте изменить поисковый запрос или выбрать другую фракцию.</p>
+              <button type="button" class="btn-finn" id="resetFiltersBtn">Сбросить фильтры</button>
+            </div>
+          `;
+          const resetBtn = document.getElementById('resetFiltersBtn');
+          if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+              activeGroup = 'all';
+              searchQuery = '';
+              if (searchInput) searchInput.value = '';
+              if (clearSearchBtn) clearSearchBtn.classList.remove('visible');
+              filterGroup.querySelectorAll('.filter-chip').forEach((chip) => {
+                chip.classList.toggle('active', chip.dataset.group === 'all');
+              });
+              renderCharacters();
+            });
+          }
+          return;
+        }
+
+        charactersGrid.innerHTML = filtered
+          .map(
+            (char) => `
+            <article class="char-card" data-char-id="${char.id}" tabindex="0" role="button" aria-label="Открыть досье: ${escapeHtml(char.name)}">
+              <div>
+                <div class="char-scene-banner" style="background: ${char.accentBg};">
+                  ${char.sceneSvg}
+                  <span class="char-realm-badge overlay-badge">${escapeHtml(char.groupLabel)}</span>
+                </div>
+                <h3 class="char-title">${escapeHtml(char.name)}</h3>
+                <div class="char-role">${escapeHtml(char.role)}</div>
+                <p class="char-summary">${escapeHtml(char.shortDesc)}</p>
+              </div>
+              <div class="char-card-bottom">
+                <span>${escapeHtml(char.species)}</span>
+                <span class="open-link">Досье →</span>
+              </div>
+            </article>
+          `
+          )
+          .join('');
+      }
+
+      if (filterGroup) {
+        filterGroup.addEventListener('click', (e) => {
+          const chip = e.target.closest('.filter-chip');
+          if (!chip) return;
+          activeGroup = chip.dataset.group;
+          filterGroup.querySelectorAll('.filter-chip').forEach((c) => {
+            c.classList.toggle('active', c === chip);
+          });
+          renderCharacters();
+        });
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          searchQuery = e.target.value;
+          if (clearSearchBtn) {
+            clearSearchBtn.classList.toggle('visible', searchQuery.length > 0);
+          }
+          renderCharacters();
+        });
+      }
+
+      if (clearSearchBtn && searchInput) {
+        clearSearchBtn.addEventListener('click', () => {
+          searchInput.value = '';
+          searchQuery = '';
+          clearSearchBtn.classList.remove('visible');
+          renderCharacters();
+        });
+      }
+
+      // Модальное окно досье
+      const detailModal = document.getElementById('detailModal');
+      const modalContent = document.getElementById('modalContent');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+
+      function openCharacterModal(char) {
+        if (!detailModal || !modalContent) return;
+        modalContent.innerHTML = `
+          <div class="modal-header-block">
+            <div class="modal-emblem" style="background: ${char.accentBg}; color: ${char.accentColor}; font-weight: 700;">
+              ${escapeHtml(char.name.slice(0, 2).toUpperCase())}
+            </div>
+            <div>
+              <div class="modal-kicker">${escapeHtml(char.groupLabel)}</div>
+              <h3 class="modal-title" id="modalTitle">${escapeHtml(char.name)}</h3>
+            </div>
+          </div>
+          <div class="modal-meta-grid">
+            <div class="modal-meta-cell">
+              <div class="modal-meta-key">Происхождение / вид</div>
+              <div class="modal-meta-val">${escapeHtml(char.species)}</div>
+            </div>
+            <div class="modal-meta-cell">
+              <div class="modal-meta-key">Способности и арсенал</div>
+              <div class="modal-meta-val">${escapeHtml(char.weapon)}</div>
+            </div>
+          </div>
+          <div class="modal-section-title">Описание</div>
+          <p class="modal-text">${escapeHtml(char.bio)}</p>
+          <div class="modal-section-title">Ключевые черты</div>
+          <div class="modal-tags">
+            ${char.traits.map((t) => `<span class="modal-tag">${escapeHtml(t)}</span>`).join('')}
+          </div>
+        `;
+        detailModal.classList.add('open');
+      }
+
+      function closeModal() {
+        if (detailModal) detailModal.classList.remove('open');
+      }
+
+      if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+      if (detailModal) {
+        detailModal.addEventListener('click', (e) => {
+          if (e.target === detailModal) closeModal();
+        });
+      }
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+      });
+
+      function bindCardModalEvents(container) {
+        if (!container) return;
+        container.addEventListener('click', (e) => {
+          const card = e.target.closest('.char-card');
+          if (!card) return;
+          const char = CHARACTERS.find((c) => c.id === card.dataset.charId);
+          if (char) openCharacterModal(char);
+        });
+        container.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            const card = e.target.closest('.char-card');
+            if (card) {
+              e.preventDefault();
+              const char = CHARACTERS.find((c) => c.id === card.dataset.charId);
+              if (char) openCharacterModal(char);
+            }
+          }
+        });
+      }
+
+      bindCardModalEvents(princessesGrid);
+      bindCardModalEvents(charactersGrid);
+
+      // 4. Королевства Ууу
+      const KINGDOMS = [
+        {
+          id: 'treehouse',
+          name: 'Домик на дереве',
+          ruler: 'Финн и Джейк',
+          climate: 'Умеренные леса Ууу',
+          status: 'База искателей приключений',
+          badgeBg: '#e0f2fe',
+          badgeColor: '#0284c7',
+          bannerSvg: `<svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg"><rect width="600" height="220" fill="#bae6fd"/><rect x="255" y="65" width="90" height="155" rx="8" fill="#92400e"/><circle cx="300" cy="60" r="78" fill="#22c55e"/><rect x="275" y="145" width="50" height="75" rx="6" fill="#fef08a" stroke="#78350f" stroke-width="4"/></svg>`,
+          desc: 'Высокий дуб на опушке, ставший домом для Финна, Джейка и БМО. Здесь хранятся трофеи, карты и проходят сборы перед новыми походами.',
+          facts: [
+            'Внутри находятся жилая комната, кухня, игровой уголок БМО и подвал с тайнами.',
+            'Отсюда начинаются десятки маршрутов по всей Земле Ууу.'
+          ]
+        },
+        {
+          id: 'candy',
+          name: 'Конфетное Королевство',
+          ruler: 'Принцесса Бубльгум',
+          climate: 'Сладостный и научный центр',
+          status: 'Крупнейший технологический центр',
+          badgeBg: '#fce7f3',
+          badgeColor: '#db2777',
+          bannerSvg: `<svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg"><rect width="600" height="220" fill="#fbcfe8"/><rect x="180" y="55" width="240" height="165" rx="16" fill="#f472b6"/><circle cx="300" cy="48" r="34" fill="#facc15"/><rect x="265" y="135" width="70" height="85" rx="12" fill="#ffffff"/></svg>`,
+          desc: 'Яркое королевство, где жители созданы из сладостей, а управление сочетает сказочные традиции и передовую науку.',
+          facts: [
+            'Под замком скрываются лаборатории и защитные системы Бубльгум.',
+            'Королевство играет ключевую роль в политике и безопасности Земли Ууу.'
+          ]
+        },
+        {
+          id: 'ice',
+          name: 'Ледяное Королевство',
+          ruler: 'Ледяной Король / Саймон Петриков',
+          climate: 'Вечные снега и ледники',
+          status: 'Северные горные пики',
+          badgeBg: '#e0f2fe',
+          badgeColor: '#0369a1',
+          bannerSvg: `<svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg"><rect width="600" height="220" fill="#0f172a"/><polygon points="150,220 260,65 370,220" fill="#7dd3fc"/><polygon points="280,220 390,45 500,220" fill="#e0f2fe"/></svg>`,
+          desc: 'Холодная крепость на вершинах гор, окружённая ледяными башнями, пингвинами и снежными ветрами.',
+          facts: [
+            'За ледяной внешностью скрывается история Саймона Петрикова и силы Короны.',
+            'Местные пингвины — постоянные обитатели дворца.'
+          ]
+        },
+        {
+          id: 'slime',
+          name: 'Слизистое Королевство',
+          ruler: 'Слизистая Принцесса',
+          climate: 'Влажные равнины',
+          status: 'Королевство Ууу',
+          badgeBg: '#dcfce7',
+          badgeColor: '#16a34a',
+          bannerSvg: `<svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg"><rect width="600" height="220" fill="#bbf7d0"/><path d="M120 220 Q140 80 300 75 Q460 80 480 220 Z" fill="#4ade80"/></svg>`,
+          desc: 'Самобытное государство слизистых жителей во главе со Слизистой Принцессой, участвующее в жизни всего континента.',
+          facts: [
+            'Жители обладают гибкой формой тела и особой культурой.',
+            'Регулярно представлено на советах правителей Земли Ууу.'
+          ]
+        },
+        {
+          id: 'fire',
+          name: 'Огненное Королевство',
+          ruler: 'Огненная Принцесса (Фиби)',
+          climate: 'Вулканические недра и жар',
+          status: 'Южные огненные земли',
+          badgeBg: '#ffedd5',
+          badgeColor: '#ea580c',
+          bannerSvg: `<svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg"><rect width="600" height="220" fill="#431407"/><path d="M140 220 Q220 50 300 110 Q380 40 460 220 Z" fill="#f97316"/></svg>`,
+          desc: 'Царство пламени и раскалённого камня, где живут огненные существа и проводятся испытания силы и чести.',
+          facts: [
+            'При Фиби королевство стало более открытым и справедливым.',
+            'Температура здесь способна расплавить обычный металл за секунды.'
+          ]
+        },
+        {
+          id: 'lsp_realm',
+          name: 'Пупырчатое Королевство',
+          ruler: 'Принцесса Пупырка',
+          climate: 'Пурпурные облака и пупырчатые леса',
+          status: 'Параллельное пространство',
+          badgeBg: '#f3e8ff',
+          badgeColor: '#9333ea',
+          bannerSvg: `<svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg"><rect width="600" height="220" fill="#e9d5ff"/><circle cx="210" cy="120" r="65" fill="#c084fc"/><circle cx="380" cy="110" r="75" fill="#a855f7"/></svg>`,
+          desc: 'Отдельное измерение с фиолетовыми пейзажами, парящими элементами и особыми правилами.',
+          facts: [
+            'Переход в Пупырчатое пространство связан с особенностями местной энергии.',
+            'Отличается ярким и эмоциональным характером жителей.'
+          ]
+        },
+        {
+          id: 'nightosphere',
+          name: 'Ночесфера',
+          ruler: 'Хансон Абадир / Марселин',
+          climate: 'Тёмное измерение демонов',
+          status: 'Иное измерение',
+          badgeBg: '#ede9fe',
+          badgeColor: '#7c3aed',
+          bannerSvg: `<svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg"><rect width="600" height="220" fill="#1e1b4b"/><circle cx="300" cy="110" r="68" fill="#7c3aed" opacity="0.45"/><polygon points="240,180 300,55 360,180" fill="#312e81"/></svg>`,
+          desc: 'Мрачное измерение, населённое демонами и древними сущностями, связанное с прошлым Марселин.',
+          facts: [
+            'Открыть портал туда помогают специальные ритуалы и артефакты.',
+            'Здесь скрыты ответы на многие вопросы о происхождении Марселин.'
+          ]
+        }
+      ];
+
+      let activeKingdomId = KINGDOMS[0].id;
+      const kingdomListEl = document.getElementById('kingdomList');
+      const kingdomViewerEl = document.getElementById('kingdomViewer');
+
+      function renderKingdoms() {
+        if (!kingdomListEl || !kingdomViewerEl) return;
+
+        kingdomListEl.innerHTML = KINGDOMS.map((k) => {
+          const active = k.id === activeKingdomId;
+          return `
+            <button type="button" class="kingdom-btn ${active ? 'active' : ''}" data-kingdom-id="${k.id}">
+              <div class="kingdom-btn-left">
+                <div class="kingdom-icon-box" style="background: ${k.badgeBg}; color: ${k.badgeColor}; font-weight: 700;">
+                  ${escapeHtml(k.name.slice(0, 2).toUpperCase())}
+                </div>
+                <div>
+                  <div class="kingdom-btn-name">${escapeHtml(k.name)}</div>
+                  <div class="kingdom-btn-ruler">Правитель: ${escapeHtml(k.ruler)}</div>
+                </div>
+              </div>
+              <span>→</span>
+            </button>
+          `;
+        }).join('');
+
+        const current = KINGDOMS.find((k) => k.id === activeKingdomId) || KINGDOMS[0];
+        kingdomViewerEl.innerHTML = `
+          <div>
+            <div class="kingdom-banner">${current.bannerSvg}</div>
+            <h3 class="kingdom-viewer-title">${escapeHtml(current.name)}</h3>
+            <p class="kingdom-viewer-desc">${escapeHtml(current.desc)}</p>
+            <div class="kingdom-specs">
+              <div class="spec-item">
+                <div class="spec-label">Правитель</div>
+                <div class="spec-val">${escapeHtml(current.ruler)}</div>
+              </div>
+              <div class="spec-item">
+                <div class="spec-label">Климат и среда</div>
+                <div class="spec-val">${escapeHtml(current.climate)}</div>
+              </div>
+            </div>
+            <div class="kingdom-facts-title">Ключевые сведения</div>
+            <ul class="kingdom-facts-list">
+              ${current.facts.map((f) => `<li>${escapeHtml(f)}</li>`).join('')}
+            </ul>
+          </div>
+        `;
+      }
+
+      if (kingdomListEl) {
+        kingdomListEl.addEventListener('click', (e) => {
+          const btn = e.target.closest('.kingdom-btn');
+          if (!btn) return;
+          activeKingdomId = btn.dataset.kingdomId;
+          renderKingdoms();
+        });
+      }
+
+      // 5. Арсенал и артефакты
+      const ARTIFACTS = [
+        {
+          id: 'scarlet',
+          name: 'Золотой меч Скарлет',
+          owner: 'Финн Парнишка',
+          rarity: 'Классика',
+          rarityBg: '#fef9c3',
+          rarityColor: '#854d0e',
+          power: 'Надёжный клинок для любых вылазок',
+          bannerSvg: `<svg viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="120" fill="#fef9c3"/><line x1="60" y1="60" x2="290" y2="60" stroke="#facc15" stroke-width="10" stroke-linecap="round"/><line x1="110" y1="36" x2="110" y2="84" stroke="#ca8a04" stroke-width="8" stroke-linecap="round"/></svg>`,
+          desc: 'Знаковый золотой меч с жёлтым эфесом, сопровождавший Финна на множестве ранних приключений.'
+        },
+        {
+          id: 'grass_sword',
+          name: 'Травяной меч',
+          owner: 'Финн Парнишка',
+          rarity: 'Мистический',
+          rarityBg: '#dcfce7',
+          rarityColor: '#166534',
+          power: 'Живая растительная сила и скорость',
+          bannerSvg: `<svg viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="120" fill="#dcfce7"/><path d="M55 62 Q180 25 305 60 Q180 95 55 62 Z" fill="#22c55e"/></svg>`,
+          desc: 'Необычный клинок, обвивающий руку владельца и реагирующий на угрозу.'
+        },
+        {
+          id: 'finn_sword',
+          name: 'Меч Финна',
+          owner: 'Финн Парнишка',
+          rarity: 'Парадоксальный',
+          rarityBg: '#e0f2fe',
+          rarityColor: '#0369a1',
+          power: 'Кристальная прочность и точность',
+          bannerSvg: `<svg viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="120" fill="#e0f2fe"/><polygon points="65,60 285,46 310,60 285,74" fill="#38bdf8"/></svg>`,
+          desc: 'Лёгкий и острый меч, связанный с необычными событиями мультивселенной.'
+        },
+        {
+          id: 'demon_blood',
+          name: 'Демонический меч крови',
+          owner: 'Джошуа / Финн',
+          rarity: 'Демонический',
+          rarityBg: '#fee2e2',
+          rarityColor: '#991b1b',
+          power: 'Багровая энергия глубин',
+          bannerSvg: `<svg viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="120" fill="#fee2e2"/><polygon points="70,60 290,48 312,60 290,72" fill="#dc2626"/></svg>`,
+          desc: 'Древний клинок с багровым оттенком и собственной историей внутри подземелий.'
+        },
+        {
+          id: 'enchiridion',
+          name: 'Энхиридион',
+          owner: 'Хранители знаний Ууу',
+          rarity: 'Реликвия',
+          rarityBg: '#fef3c7',
+          rarityColor: '#92400e',
+          power: 'Руководство героя и порталы',
+          bannerSvg: `<svg viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="120" fill="#fef3c7"/><rect x="125" y="22" width="110" height="76" rx="8" fill="#d97706"/><circle cx="180" cy="60" r="14" fill="#38bdf8"/></svg>`,
+          desc: 'Книга с наставлениями для искателей приключений и ключами к межпространственным переходам.'
+        },
+        {
+          id: 'ice_crown',
+          name: 'Ледяная Корона',
+          owner: 'Саймон Петриков / Ледяной Король',
+          rarity: 'Древний артефакт',
+          rarityBg: '#e0f2fe',
+          rarityColor: '#0284c7',
+          power: 'Стихия льда и древняя память',
+          bannerSvg: `<svg viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="120" fill="#e0f2fe"/><polygon points="120,84 140,32 180,68 220,32 240,84" fill="#facc15" stroke="#0284c7" stroke-width="3"/></svg>`,
+          desc: 'Золотой венец с драгоценными камнями, дарующий власть над морозом ценой памяти владельца.'
+        }
+      ];
+
+      const artifactsGrid = document.getElementById('artifactsGrid');
+
+      function renderArtifacts() {
+        if (!artifactsGrid) return;
+        artifactsGrid.innerHTML = ARTIFACTS.map(
+          (art) => `
+            <article class="artifact-card" data-art-id="${art.id}" tabindex="0" role="button" aria-label="Открыть описание: ${escapeHtml(art.name)}">
+              <div>
+                <div class="artifact-scene-banner">
+                  ${art.bannerSvg}
+                  <span class="artifact-rarity overlay-rarity" style="background: ${art.rarityBg}; color: ${art.rarityColor};">${escapeHtml(art.rarity)}</span>
+                </div>
+                <h3 class="artifact-name">${escapeHtml(art.name)}</h3>
+                <div class="artifact-owner">Владелец: ${escapeHtml(art.owner)}</div>
+                <p class="artifact-desc">${escapeHtml(art.desc)}</p>
+              </div>
+              <div class="artifact-power-bar">
+                <span>${escapeHtml(art.power)}</span>
+                <span>→</span>
+              </div>
+            </article>
+          `
+        ).join('');
+      }
+
+      if (artifactsGrid) {
+        artifactsGrid.addEventListener('click', (e) => {
+          const card = e.target.closest('.artifact-card');
+          if (!card) return;
+          const art = ARTIFACTS.find((a) => a.id === card.dataset.artId);
+          if (!art || !detailModal || !modalContent) return;
+          modalContent.innerHTML = `
+            <div class="modal-header-block">
+              <div class="modal-emblem" style="background: ${art.rarityBg}; color: ${art.rarityColor}; font-weight: 700;">
+                ${escapeHtml(art.name.slice(0, 2).toUpperCase())}
+              </div>
+              <div>
+                <div class="modal-kicker">${escapeHtml(art.rarity)}</div>
+                <h3 class="modal-title" id="modalTitle">${escapeHtml(art.name)}</h3>
+              </div>
+            </div>
+            <div class="modal-meta-grid">
+              <div class="modal-meta-cell">
+                <div class="modal-meta-key">Владелец</div>
+                <div class="modal-meta-val">${escapeHtml(art.owner)}</div>
+              </div>
+              <div class="modal-meta-cell">
+                <div class="modal-meta-key">Особенность</div>
+                <div class="modal-meta-val">${escapeHtml(art.power)}</div>
+              </div>
+            </div>
+            <div class="modal-section-title">История и свойства</div>
+            <p class="modal-text">${escapeHtml(art.desc)}</p>
+          `;
+          detailModal.classList.add('open');
+        });
+      }
+
+      // 6. Дневник искателя приключений (трекер эпизодов + заметки в localStorage)
+      const KEY_EPISODES = [
+        { id: 'ep1', code: 'С01Э05', name: 'Энхиридион!', note: 'Путь к священной книге героев и первые серьёзные испытания.' },
+        { id: 'ep2', code: 'С03Э19', name: 'Холли Джолли Тайны', note: 'История Саймона Петрикова на старых видеозаписях.' },
+        { id: 'ep3', code: 'С04Э25', name: 'Я помню тебя', note: 'Трогательная встреча Марселин и Саймона.' },
+        { id: 'ep4', code: 'С05Э01', name: 'Финн Человек', note: 'Открытие альтернативной линии Земли Ууу.' },
+        { id: 'ep5', code: 'С06Э43', name: 'Комета', note: 'Космический выбор и новое понимание мира.' },
+        { id: 'ep6', code: 'С07Э06', name: 'Ставки: Вампир над ней', note: 'Начало истории о королях вампиров и прошлом Марселин.' },
+        { id: 'ep7', code: 'С08Э14', name: 'Элементаль', note: 'Стихийное преображение королевств Ууу.' },
+        { id: 'ep8', code: 'С10Э16', name: 'Приходи со мной', note: 'Большой финал путешествия Финна и Джейка.' }
+      ];
+
+      const STORAGE_CHECKLIST_KEY = 'ooo_diary_episodes_v1';
+      const STORAGE_NOTES_KEY = 'ooo_diary_notes_v1';
+
+      let checkedIds = new Set();
+      let notes = [];
+
+      try {
+        const rawCheck = JSON.parse(localStorage.getItem(STORAGE_CHECKLIST_KEY) || '[]');
+        if (Array.isArray(rawCheck)) checkedIds = new Set(rawCheck);
+      } catch (err) {
+        checkedIds = new Set();
+      }
+
+      try {
+        const rawNotes = JSON.parse(localStorage.getItem(STORAGE_NOTES_KEY) || '[]');
+        if (Array.isArray(rawNotes)) notes = rawNotes;
+      } catch (err) {
+        notes = [];
+      }
+
+      function saveDiaryState() {
+        try {
+          localStorage.setItem(STORAGE_CHECKLIST_KEY, JSON.stringify(Array.from(checkedIds)));
+          localStorage.setItem(STORAGE_NOTES_KEY, JSON.stringify(notes));
+        } catch (err) {
+          // ignore storage quota errors
+        }
+      }
+
+      const episodesListEl = document.getElementById('episodesList');
+      const episodeProgressTextEl = document.getElementById('episodeProgressText');
+      const episodeProgressBarEl = document.getElementById('episodeProgressBar');
+      const headerProgressBadgeEl = document.getElementById('headerProgressBadge');
+      const resetProgressBtn = document.getElementById('resetProgressBtn');
+
+      function renderEpisodes() {
+        if (!episodesListEl) return;
+        const doneCount = checkedIds.size;
+        const totalCount = KEY_EPISODES.length;
+        const pct = Math.round((doneCount / totalCount) * 100);
+
+        if (episodeProgressTextEl) {
+          episodeProgressTextEl.textContent = `Просмотрено ${doneCount} из ${totalCount}`;
+        }
+        if (episodeProgressBarEl) {
+          episodeProgressBarEl.style.width = `${pct}%`;
+        }
+        if (headerProgressBadgeEl) {
+          headerProgressBadgeEl.textContent = `${doneCount}/${totalCount}`;
+        }
+
+        episodesListEl.innerHTML = KEY_EPISODES.map((ep) => {
+          const isChecked = checkedIds.has(ep.id);
+          return `
+            <div class="episode-item ${isChecked ? 'watched' : ''}" data-ep-id="${ep.id}" tabindex="0" role="checkbox" aria-checked="${isChecked}">
+              <div class="episode-checkbox">${isChecked ? '✓' : ''}</div>
+              <div>
+                <span class="episode-code">${escapeHtml(ep.code)}</span>
+                <div class="episode-name">${escapeHtml(ep.name)}</div>
+                <div class="episode-note">${escapeHtml(ep.note)}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      if (episodesListEl) {
+        episodesListEl.addEventListener('click', (e) => {
+          const item = e.target.closest('.episode-item');
+          if (!item) return;
+          const id = item.dataset.epId;
+          if (!id) return;
+          if (checkedIds.has(id)) {
+            checkedIds.delete(id);
+          } else {
+            checkedIds.add(id);
+          }
+          saveDiaryState();
+          renderEpisodes();
+        });
+      }
+
+      if (resetProgressBtn) {
+        resetProgressBtn.addEventListener('click', () => {
+          checkedIds.clear();
+          saveDiaryState();
+          renderEpisodes();
+          showToast('Отметки эпизодов сброшены');
+        });
+      }
+
+      const noteForm = document.getElementById('noteForm');
+      const noteTitleInput = document.getElementById('noteTitleInput');
+      const noteTextInput = document.getElementById('noteTextInput');
+      const noteFormError = document.getElementById('noteFormError');
+      const notesListEl = document.getElementById('notesList');
+
+      function renderNotes() {
+        if (!notesListEl) return;
+        if (notes.length === 0) {
+          notesListEl.innerHTML = `<div class="notes-empty">Заметок пока нет. Добавьте первую запись о Земле Ууу выше.</div>`;
+          return;
+        }
+        notesListEl.innerHTML = notes
+          .map(
+            (n) => `
+            <div class="user-note-card" data-note-id="${escapeHtml(n.id)}">
+              <div>
+                <div class="user-note-title">${escapeHtml(n.title)}</div>
+                <div class="user-note-text">${escapeHtml(n.text)}</div>
+                <span class="user-note-date">${escapeHtml(n.date)}</span>
+              </div>
+              <button type="button" class="delete-note-btn" aria-label="Удалить заметку">×</button>
+            </div>
+          `
+          )
+          .join('');
+      }
+
+      if (noteForm && noteTitleInput && noteTextInput) {
+        noteForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const title = noteTitleInput.value.trim();
+          const text = noteTextInput.value.trim();
+          if (!title || !text) {
+            if (noteFormError) noteFormError.classList.add('visible');
+            return;
+          }
+          if (noteFormError) noteFormError.classList.remove('visible');
+
+          notes.unshift({
+            id: `note_${Date.now()}`,
+            title,
+            text,
+            date: new Date().toLocaleDateString('ru-RU')
+          });
+          saveDiaryState();
+          renderNotes();
+          noteTitleInput.value = '';
+          noteTextInput.value = '';
+          showToast('Заметка сохранена в дневник');
+        });
+      }
+
+      if (notesListEl) {
+        notesListEl.addEventListener('click', (e) => {
+          const delBtn = e.target.closest('.delete-note-btn');
+          if (!delBtn) return;
+          const card = delBtn.closest('.user-note-card');
+          if (!card) return;
+          const id = card.dataset.noteId;
+          notes = notes.filter((n) => n.id !== id);
+          saveDiaryState();
+          renderNotes();
+          showToast('Заметка удалена');
+        });
+      }
+
+      // Инициализация всех разделов
+      renderSeasonTabs();
+      selectEpisode(0, SEASONS[0].episodes[0]);
+      renderPrincesses();
+      renderCharacters();
+      renderKingdoms();
+      renderArtifacts();
+      renderEpisodes();
+      renderNotes();
+    })();
+  </script>
+</body>
+</html>
